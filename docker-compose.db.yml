@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  oracle-db:
+    image: gvenzl/oracle-free:23-slim
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    environment:
+      ORACLE_PASSWORD: "ChangeMe123"
+      APP_USER: "arya"
+      APP_USER_PASSWORD: "ChangeMe123"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./db/init:/container-entrypoint-initdb.d
+
+volumes:
+  oracle-data:

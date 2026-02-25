@@ -1,0 +1,118 @@
+/* ARYA Card Component Styles */
+
+.arya-card {
+  position: relative;
+  border-radius: 18px;
+  transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Variants */
+.arya-card--elevated {
+  background: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.arya-card--filled {
+  background: #f5f5f7;
+  box-shadow: none;
+}
+
+.arya-card--outlined {
+  background: #FFFFFF;
+  border: 1px solid #d2d2d7;
+  box-shadow: none;
+}
+
+/* Padding */
+.arya-card--padding-none {
+  padding: 0;
+}
+
+.arya-card--padding-sm {
+  padding: 16px;
+}
+
+.arya-card--padding-md {
+  padding: 24px;
+}
+
+.arya-card--padding-lg {
+  padding: 32px;
+}
+
+/* Hoverable */
+.arya-card--hoverable {
+  cursor: pointer;
+}
+
+.arya-card--hoverable:hover {
+  transform: translateY(-4px);
+}
+
+.arya-card--elevated.arya-card--hoverable:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Pressable */
+.arya-card--pressable {
+  cursor: pointer;
+}
+
+.arya-card--pressable:active {
+  transform: scale(0.98);
+}
+
+/* Glass Effect */
+.arya-card--glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Card Sections */
+.arya-card__header {
+  margin-bottom: 12px;
+}
+
+.arya-card__body {
+  flex: 1;
+}
+
+.arya-card__footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(60, 60, 67, 0.29);
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .arya-card--elevated {
+    background: #1C1C1E;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .arya-card--filled {
+    background: #2C2C2E;
+  }
+
+  .arya-card--outlined {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.65);
+  }
+
+  .arya-card--elevated.arya-card--hoverable:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  .arya-card--glass {
+    background: rgba(30, 30, 30, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .arya-card__footer {
+    border-top-color: rgba(84, 84, 88, 0.65);
+  }
+}

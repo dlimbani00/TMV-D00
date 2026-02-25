@@ -1,0 +1,75 @@
+version: "3.9"
+
+services:
+  arya-web:
+    build:
+      context: .
+      dockerfile: packages/arya-design-system/Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      NODE_ENV: development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - arya-network
+
+  survey-web:
+    build:
+      context: .
+      dockerfile: packages/empsurvey/Dockerfile
+    ports:
+      - "5174:5174"
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      NODE_ENV: development
+      VITE_DB_HOST: localhost
+      VITE_DB_PORT: "1521"
+      VITE_DB_SERVICE: FREEPDB1
+      VITE_DB_USER: arya
+      VITE_API_URL: http://empsurvey-api:8080/api
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - arya-network
+
+  empsurvey-api:
+    build:
+      context: ./packages/empsurvey-api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: oracle-db
+      DB_PORT: "1521"
+      DB_SERVICE: FREE
+      DB_USER: ARYA
+      DB_PASSWORD: arya123
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - oracle-db
+    networks:
+      - arya-network
+
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PWD: oracle_password
+      ORACLE_CHARACTERSET: AL32UTF8
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./db/init:/docker-entrypoint-initdb.d
+    networks:
+      - arya-network
+
+networks:
+  arya-network:
+    driver: bridge
+
+volumes:
+  oracle-data:

@@ -1,0 +1,292 @@
+/* Registration Page Styles - Apple Design */
+
+.registration-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+/* Header */
+.registration-header {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid #d2d2d7;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 22px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+}
+
+.apple-logo {
+  width: 16px;
+  height: auto;
+}
+
+/* Main Content */
+.registration-main {
+  flex: 1;
+  padding: 48px 22px 80px;
+  background: #fff;
+}
+
+.registration-container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.registration-title {
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.1;
+  color: #1d1d1f;
+  margin: 0 0 12px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.registration-subtitle {
+  font-size: 17px;
+  line-height: 1.47;
+  color: #6e6e73;
+  margin: 0 0 32px;
+  text-align: center;
+}
+
+/* Form Styles */
+.registration-form {
+  width: 100%;
+}
+
+.form-section {
+  margin-bottom: 16px;
+}
+
+.form-section .input-wrapper {
+  margin-bottom: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.birthday-row {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.form-label {
+  position: absolute;
+  left: 16px;
+  top: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #86868b;
+  margin-bottom: 0;
+  letter-spacing: -0.08px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.form-label-outside {
+  font-size: 13px;
+  font-weight: 400;
+  color: #1d1d1f;
+  margin-bottom: 8px;
+  letter-spacing: -0.08px;
+  display: block;
+}
+
+.form-select {
+  width: 100%;
+  padding: 14px 40px 14px 16px;
+  font-size: 17px;
+  line-height: 1.47;
+  color: #1d1d1f;
+  background: #fff;
+  border: 1px solid #d2d2d7;
+  border-radius: 12px;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 52px;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%231d1d1f'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 10px 6px;
+  cursor: pointer;
+}
+
+.form-group .form-select {
+  padding: 22px 40px 6px 16px;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #0071e3;
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+}
+
+.form-hint {
+  font-size: 12px;
+  line-height: 1.33;
+  color: #86868b;
+  margin: 6px 0 0;
+}
+
+/* Terms Section */
+.terms-section {
+  padding: 20px;
+  background: #f5f5f7;
+  border-radius: 12px;
+}
+
+.terms-text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6e6e73;
+  margin: 0;
+}
+
+.terms-link {
+  color: #06c;
+  text-decoration: none;
+}
+
+.terms-link:hover {
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.form-actions {
+  margin-bottom: 24px;
+}
+
+/* Sign In Section */
+.signin-section {
+  text-align: center;
+  padding: 24px 0 0;
+  border-top: 1px solid #d2d2d7;
+}
+
+.signin-text {
+  font-size: 14px;
+  line-height: 1.42;
+  color: #6e6e73;
+  margin: 0;
+}
+
+.signin-link {
+  color: #06c;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.signin-link:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+.registration-footer {
+  background: #f5f5f7;
+  border-top: 1px solid #d2d2d7;
+  padding: 24px 22px;
+}
+
+.footer-container {
+  max-width: 980px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 0;
+  margin-bottom: 12px;
+}
+
+.footer-link {
+  font-size: 12px;
+  color: #06c;
+  text-decoration: none;
+  padding: 0 8px;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+.footer-separator {
+  color: #d2d2d7;
+  font-size: 12px;
+}
+
+.footer-copyright {
+  font-size: 12px;
+  line-height: 1.33;
+  color: #86868b;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .registration-main {
+    padding: 32px 16px 60px;
+  }
+
+  .registration-title {
+    font-size: 32px;
+  }
+
+  .registration-subtitle {
+    font-size: 15px;
+    margin-bottom: 32px;
+  }
+
+  .registration-container {
+    max-width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .birthday-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-section {
+    margin-bottom: 24px;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-separator {
+    display: none;
+  }
+}

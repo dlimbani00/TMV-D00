@@ -1,0 +1,28 @@
+{
+  "name": "arya-monorepo",
+  "version": "1.0.0",
+  "description": "ARYA Monorepo - Design System + Applications",
+  "private": true,
+  "workspaces": [
+    "packages/arya-design-system",
+    "packages/empsurvey"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "dev:arya": "npm -w @arya/design-system run dev",
+    "dev:survey": "npm -w empsurvey run dev",
+    "build": "npm run build --workspaces",
+    "build:arya": "npm -w @arya/design-system run build",
+    "build:survey": "npm -w empsurvey run build",
+    "lint": "npm run lint --workspaces",
+    "db:up": "docker compose -f docker-compose.db.yml up -d",
+    "db:down": "docker compose -f docker-compose.db.yml down",
+    "docker:up": "docker compose -f docker-compose.yml up -d",
+    "docker:down": "docker compose -f docker-compose.yml down",
+    "docker:prod": "docker compose -f docker-compose.prod.yml up -d",
+    "docker:prod:down": "docker compose -f docker-compose.prod.yml down"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}

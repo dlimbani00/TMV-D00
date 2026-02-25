@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  arya-web:
+    build:
+      context: .
+      dockerfile: packages/arya-design-system/Dockerfile.prod
+    ports:
+      - "8082:80"
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - oracle-db
+    networks:
+      - arya-network
+
+  survey-web:
+    build:
+      context: .
+      dockerfile: packages/empsurvey/Dockerfile.prod
+    ports:
+      - "8081:80"
+    environment:
+      NODE_ENV: production
+      VITE_DB_HOST: oracle-db
+      VITE_DB_PORT: "1521"
+      VITE_DB_SERVICE: FREEPDB1
+      VITE_DB_USER: arya
+    depends_on:
+      - oracle-db
+    networks:
+      - arya-network
+
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest
+    environment:
+      ORACLE_PWD: Oracle123
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./db/init:/docker-entrypoint-initdb.d
+    networks:
+      - arya-network
+
+volumes:
+  oracle-data:
+
+networks:
+  arya-network:
+    driver: bridge

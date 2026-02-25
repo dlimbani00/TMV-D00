@@ -1,0 +1,581 @@
+/* EMPSurvey Admin - ARYA Design System */
+
+:root {
+  /* ARYA Color Tokens */
+  --color-primary: #007AFF;
+  --color-primary-dark: #0062CC;
+  --color-primary-darker: #004999;
+  --color-secondary: rgba(120, 120, 128, 0.2);
+  --color-secondary-dark: rgba(120, 120, 128, 0.28);
+  --color-tertiary: #F2F2F7;
+  --color-tertiary-dark: #E5E5EA;
+  --color-background: #FFFFFF;
+  --color-background-secondary: #F2F2F7;
+  --color-text: #000000;
+  --color-text-secondary: #3C3C43;
+  --color-text-tertiary: rgba(60, 60, 67, 0.3);
+  --color-text-quaternary: rgba(60, 60, 67, 0.18);
+  --color-border: #D1D5DB;
+  --color-border-light: rgba(60, 60, 67, 0.29);
+  --color-danger: #FF3B30;
+  --color-danger-dark: #FF2D21;
+  --color-success: #34C759;
+  --color-warning: #FF9500;
+  --color-fill-primary: rgba(120, 120, 128, 0.2);
+  --color-fill-secondary: rgba(120, 120, 128, 0.16);
+  --color-fill-tertiary: rgba(120, 120, 128, 0.12);
+  
+  /* ARYA Spacing - 8px Base Grid */
+  --spacing-0: 0;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 40px;
+  --spacing-3xl: 48px;
+  
+  /* ARYA Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  
+  /* ARYA Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+  
+  /* ARYA Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--color-background-secondary);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* App Layout */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Apple-style Navigation Bar */
+.apple-nav {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.nav-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  gap: var(--spacing-xl);
+}
+
+.nav-logo {
+  opacity: 0.9;
+  transition: opacity var(--transition-base);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-logo:hover {
+  opacity: 1;
+}
+
+.nav-brand-text {
+  color: #f5f5f7;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 32px;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-list li {
+  margin: 0;
+}
+
+.nav-link {
+  color: #f5f5f7;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.8;
+  transition: opacity var(--transition-base);
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  opacity: 1;
+}
+
+.nav-link-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.nav-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.8;
+  transition: opacity var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-icon-btn:hover {
+  opacity: 1;
+}
+
+/* App Main Content */
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--color-background-secondary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Buttons - ARYA Variants */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  font-family: inherit;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Button Sizes */
+.btn-sm {
+  height: 32px;
+  padding: 0 var(--spacing-md);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.btn {
+  height: 44px;
+  padding: 0 var(--spacing-lg);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.btn-lg {
+  height: 52px;
+  padding: 0 var(--spacing-xl);
+  font-size: 1.0625rem;
+  line-height: 1.4;
+}
+
+/* Button Variants */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--color-primary-darker);
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+  border: none;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-secondary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background-color: rgba(120, 120, 128, 0.35);
+  transform: translateY(0);
+}
+
+.btn-tertiary {
+  background-color: var(--color-tertiary);
+  color: var(--color-text);
+}
+
+.btn-tertiary:hover:not(:disabled) {
+  background-color: var(--color-tertiary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-tertiary:active:not(:disabled) {
+  background-color: #D1D1D6;
+  transform: translateY(0);
+}
+
+.btn-danger {
+  background-color: var(--color-danger);
+  color: #FFFFFF;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--color-danger-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+}
+
+.btn-danger:active:not(:disabled) {
+  background-color: #E62117;
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-primary);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: rgba(0, 122, 255, 0.1);
+}
+
+.btn-ghost:active:not(:disabled) {
+  background-color: rgba(0, 122, 255, 0.15);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 0.9375rem;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-base);
+}
+
+.btn-back:hover {
+  background-color: rgba(0, 122, 255, 0.1);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Form Elements - ARYA Design System */
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  line-height: 1.4;
+  letter-spacing: -0.16px;
+}
+
+.form-input,
+.form-select,
+textarea {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  transition: all var(--transition-base);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-input:focus,
+.form-select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23007AFF' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-md) center;
+  padding-right: var(--spacing-xl);
+  cursor: pointer;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.form-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-section:last-child {
+  margin-bottom: 0;
+}
+
+.helper-text {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-sm);
+  line-height: 1.4;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  gap: var(--spacing-md);
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* Card Styles - ARYA Card Component */
+.card {
+  background-color: var(--color-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  padding: var(--spacing-lg);
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-elevated {
+  background-color: var(--color-background);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.card-filled {
+  background-color: var(--color-background-secondary);
+  box-shadow: none;
+  border: none;
+}
+
+.card-outlined {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border-light);
+  box-shadow: none;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  gap: var(--spacing-md);
+}
+
+.loading::before {
+  content: '';
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-fill-tertiary);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .nav-list {
+    gap: 24px;
+  }
+
+  .nav-link {
+    font-size: 0.6875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-main {
+    padding: 0;
+  }
+
+  .nav-content {
+    padding: 0 var(--spacing-md);
+  }
+
+  .nav-list {
+    display: none;
+  }
+
+  .nav-brand-text {
+    font-size: 1rem;
+  }
+
+  .nav-actions {
+    gap: var(--spacing-md);
+  }
+
+  .btn {
+    height: auto;
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+
+  .btn-sm {
+    height: auto;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .form-label {
+    font-size: 0.9375rem;
+  }
+
+  .form-input,
+  .form-select,
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: var(--spacing-md);
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #FFFFFF;
+    --color-text-secondary: rgba(255, 255, 255, 0.6);
+    --color-text-tertiary: rgba(255, 255, 255, 0.3);
+    --color-text-quaternary: rgba(255, 255, 255, 0.18);
+    --color-background: #1C1C1E;
+    --color-background-secondary: #000000;
+    --color-border: #454545;
+    --color-border-light: rgba(84, 84, 88, 0.65);
+    --color-tertiary: #2C2C2E;
+    --color-tertiary-dark: #3C3C3E;
+    --color-fill-primary: rgba(120, 120, 128, 0.3);
+  }
+
+  .app-nav {
+    background-color: var(--color-background);
+    border-right-color: var(--color-border-light);
+  }
+
+  .nav-brand {
+    border-bottom-color: var(--color-border-light);
+  }
+
+  .nav-links a:hover {
+    background-color: var(--color-background-secondary);
+  }
+
+  .form-input,
+  .form-select,
+  textarea {
+    background-color: var(--color-background);
+    border-color: var(--color-border-light);
+    color: var(--color-text);
+  }
+
+  .card,
+  .card-elevated {
+    background-color: var(--color-background);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: rgba(84, 84, 88, 0.65);
+  }
+
+  .card-filled {
+    background-color: var(--color-background-secondary);
+  }
+}

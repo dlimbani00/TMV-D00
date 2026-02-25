@@ -1,0 +1,235 @@
+/* ARYA Button Component Styles */
+
+.arya-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Sizes */
+.arya-button--sm {
+  height: 32px;
+  padding: 0 16px;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.16px;
+}
+
+.arya-button--md {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: -0.32px;
+}
+
+.arya-button--lg {
+  height: 52px;
+  padding: 0 24px;
+  font-size: 17px;
+  line-height: 24px;
+  letter-spacing: -0.41px;
+}
+
+/* Primary Variant */
+.arya-button--primary {
+  background: #007AFF;
+  color: #FFFFFF;
+}
+
+.arya-button--primary:hover:not(:disabled) {
+  background: #0062CC;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+}
+
+.arya-button--primary:active:not(:disabled) {
+  background: #004999;
+  transform: translateY(0);
+}
+
+/* Secondary Variant */
+.arya-button--secondary {
+  background: rgba(120, 120, 128, 0.2);
+  color: #007AFF;
+}
+
+.arya-button--secondary:hover:not(:disabled) {
+  background: rgba(120, 120, 128, 0.28);
+  transform: translateY(-1px);
+}
+
+.arya-button--secondary:active:not(:disabled) {
+  background: rgba(120, 120, 128, 0.35);
+  transform: translateY(0);
+}
+
+/* Tertiary Variant */
+.arya-button--tertiary {
+  background: #F2F2F7;
+  color: #000000;
+}
+
+.arya-button--tertiary:hover:not(:disabled) {
+  background: #E5E5EA;
+  transform: translateY(-1px);
+}
+
+.arya-button--tertiary:active:not(:disabled) {
+  background: #D1D1D6;
+  transform: translateY(0);
+}
+
+/* Destructive Variant */
+.arya-button--destructive {
+  background: #FF3B30;
+  color: #FFFFFF;
+}
+
+.arya-button--destructive:hover:not(:disabled) {
+  background: #FF2D21;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+}
+
+.arya-button--destructive:active:not(:disabled) {
+  background: #E62117;
+  transform: translateY(0);
+}
+
+/* Ghost Variant */
+.arya-button--ghost {
+  background: transparent;
+  color: #007AFF;
+}
+
+.arya-button--ghost:hover:not(:disabled) {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.arya-button--ghost:active:not(:disabled) {
+  background: rgba(0, 122, 255, 0.15);
+}
+
+/* States */
+.arya-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.arya-button:focus-visible {
+  outline: 2px solid #007AFF;
+  outline-offset: 2px;
+}
+
+/* Full Width */
+.arya-button--full-width {
+  width: 100%;
+}
+
+/* Loading State */
+.arya-button--loading .arya-button__text {
+  opacity: 0;
+}
+
+.arya-button__spinner {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arya-button__spinner-icon {
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+.arya-button__spinner-circle {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 45;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Icons */
+.arya-button__icon-before,
+.arya-button__icon-after {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .arya-button--primary {
+    background: #0A84FF;
+  }
+
+  .arya-button--primary:hover:not(:disabled) {
+    background: #0070E0;
+  }
+
+  .arya-button--primary:active:not(:disabled) {
+    background: #005BBD;
+  }
+
+  .arya-button--secondary {
+    background: rgba(120, 120, 128, 0.36);
+    color: #0A84FF;
+  }
+
+  .arya-button--secondary:hover:not(:disabled) {
+    background: rgba(120, 120, 128, 0.44);
+  }
+
+  .arya-button--secondary:active:not(:disabled) {
+    background: rgba(120, 120, 128, 0.52);
+  }
+
+  .arya-button--tertiary {
+    background: #1C1C1E;
+    color: #FFFFFF;
+  }
+
+  .arya-button--tertiary:hover:not(:disabled) {
+    background: #2C2C2E;
+  }
+
+  .arya-button--tertiary:active:not(:disabled) {
+    background: #3A3A3C;
+  }
+
+  .arya-button--ghost {
+    color: #0A84FF;
+  }
+
+  .arya-button--ghost:hover:not(:disabled) {
+    background: rgba(10, 132, 255, 0.1);
+  }
+
+  .arya-button--ghost:active:not(:disabled) {
+    background: rgba(10, 132, 255, 0.15);
+  }
+}
