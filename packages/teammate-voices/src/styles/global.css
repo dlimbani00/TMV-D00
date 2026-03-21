@@ -698,6 +698,7 @@ input, textarea, select {
   background: #fff;
   border-radius: 12px;
   padding: 32px;
+  min-height: 500px;
 }
 
 .programs-page__title {

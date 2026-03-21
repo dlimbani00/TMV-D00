@@ -20,9 +20,9 @@ export default function Programs() {
         { label: 'Programs' },
       ]} />
 
-      <div className="programs-page">
       <h1 className="programs-page__title">Programs</h1>
 
+      <div className="programs-page">
       <div className="programs-page__controls">
         <ToggleSwitch
           label="Hide inactive"
