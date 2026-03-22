@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:oracle:thin:@${DB_HOST:localhost}:${DB_PORT:1521}/${DB_SERVICE:FREEPDB1}
-    username: ${DB_USER:TEAMMATE_VOICES}
-    password: ${DB_PASSWORD:teammate123}
+    username: ${DB_USER:teammate_voices}
+    password: ${DB_PASSWORD:ChangeMe123}
     driver-class-name: oracle.jdbc.OracleDriver
     hikari:
       maximum-pool-size: 10
