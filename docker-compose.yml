@@ -50,7 +50,8 @@ services:
       DB_PASSWORD: teammate123
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      - oracle-db
+      oracle-db:
+        condition: service_healthy
     networks:
       - tv-network
 
@@ -84,7 +85,8 @@ services:
       DB_PASSWORD: teammate123
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      - oracle-db
+      oracle-db:
+        condition: service_healthy
     networks:
       - tv-network
 
@@ -98,6 +100,12 @@ services:
     volumes:
       - oracle-data:/opt/oracle/oradata
       - ./db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -S sys/oracle_password@//localhost:1521/FREEPDB1 as sysdba || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
     networks:
       - tv-network
 

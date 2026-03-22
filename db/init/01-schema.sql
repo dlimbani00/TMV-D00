@@ -18,3 +18,6 @@ CREATE TABLE apple_account_users (
 );
 
 CREATE INDEX idx_apple_account_users_phone ON apple_account_users (phone_number);
+
+-- Grant SURVEY_USER access to this table
+GRANT SELECT, INSERT, UPDATE, DELETE ON TEAMMATE_VOICES.apple_account_users TO SURVEY_USER;
