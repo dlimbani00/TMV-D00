@@ -2,6 +2,7 @@ package com.teammatevoices.controller;
 
 import com.teammatevoices.dto.ParticipantDTO;
 import com.teammatevoices.service.ParticipantService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class ParticipantController {
     }
 
     @PostMapping
-    public ResponseEntity<ParticipantDTO> createParticipant(@RequestBody ParticipantDTO dto) {
+    public ResponseEntity<ParticipantDTO> createParticipant(@Valid @RequestBody ParticipantDTO dto) {
         log.info("POST /participants - {}", dto.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(participantService.createParticipant(dto));
     }

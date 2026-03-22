@@ -2,6 +2,7 @@ package com.teammatevoices.controller;
 
 import com.teammatevoices.dto.ProgramDTO;
 import com.teammatevoices.service.ProgramService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,14 +32,14 @@ public class ProgramController {
     }
 
     @PostMapping
-    public ResponseEntity<ProgramDTO> createProgram(@RequestBody ProgramDTO programDTO) {
+    public ResponseEntity<ProgramDTO> createProgram(@Valid @RequestBody ProgramDTO programDTO) {
         log.info("POST /programs - {}", programDTO.getName());
         ProgramDTO created = programService.createProgram(programDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProgramDTO> updateProgram(@PathVariable Long id, @RequestBody ProgramDTO programDTO) {
+    public ResponseEntity<ProgramDTO> updateProgram(@PathVariable Long id, @Valid @RequestBody ProgramDTO programDTO) {
         log.info("PUT /programs/{}", id);
         return ResponseEntity.ok(programService.updateProgram(id, programDTO));
     }

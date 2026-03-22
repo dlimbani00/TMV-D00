@@ -2,6 +2,7 @@ package com.teammatevoices.controller;
 
 import com.teammatevoices.dto.SurveyDTO;
 import com.teammatevoices.service.SurveyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,14 +32,14 @@ public class SurveyController {
     }
 
     @PostMapping
-    public ResponseEntity<SurveyDTO> createSurvey(@RequestBody SurveyDTO surveyDTO) {
+    public ResponseEntity<SurveyDTO> createSurvey(@Valid @RequestBody SurveyDTO surveyDTO) {
         log.info("POST /surveys - {}", surveyDTO.getTitle());
         SurveyDTO created = surveyService.createSurvey(surveyDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SurveyDTO> updateSurvey(@PathVariable Long id, @RequestBody SurveyDTO surveyDTO) {
+    public ResponseEntity<SurveyDTO> updateSurvey(@PathVariable Long id, @Valid @RequestBody SurveyDTO surveyDTO) {
         log.info("PUT /surveys/{}", id);
         return ResponseEntity.ok(surveyService.updateSurvey(id, surveyDTO));
     }

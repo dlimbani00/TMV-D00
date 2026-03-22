@@ -2,6 +2,7 @@ package com.teammatevoices.controller;
 
 import com.teammatevoices.dto.AssignmentRuleDTO;
 import com.teammatevoices.service.AssignmentRuleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,13 +26,13 @@ public class AssignmentRuleController {
     }
 
     @PostMapping
-    public ResponseEntity<AssignmentRuleDTO> createRule(@RequestBody AssignmentRuleDTO dto) {
+    public ResponseEntity<AssignmentRuleDTO> createRule(@Valid @RequestBody AssignmentRuleDTO dto) {
         log.info("POST /assignment-rules - {}", dto.getRuleName());
         return ResponseEntity.status(HttpStatus.CREATED).body(ruleService.createRule(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AssignmentRuleDTO> updateRule(@PathVariable Long id, @RequestBody AssignmentRuleDTO dto) {
+    public ResponseEntity<AssignmentRuleDTO> updateRule(@PathVariable Long id, @Valid @RequestBody AssignmentRuleDTO dto) {
         log.info("PUT /assignment-rules/{}", id);
         return ResponseEntity.ok(ruleService.updateRule(id, dto));
     }
