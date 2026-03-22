@@ -13,10 +13,14 @@ export default function ProgramCreate() {
   const [description, setDescription] = useState('')
   const [isActive, setIsActive] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleSave = async () => {
     if (!name.trim()) return
     setLoading(true)
+    setErrorMessage('')
+    setSuccessMessage('')
     try {
       await api.createProgram({
         name: name.trim(),
@@ -25,9 +29,12 @@ export default function ProgramCreate() {
         status: isActive ? 'ACTIVE' : 'INACTIVE',
         surveyProgress: 'Not started',
       })
-      navigate('/programs')
+      setSuccessMessage('Program saved successfully!')
+      setLoading(false)
+      setTimeout(() => navigate('/programs'), 1500)
     } catch (err) {
       console.error('Failed to create program:', err)
+      setErrorMessage('Failed to save program. Please try again.')
       setLoading(false)
     }
   }
@@ -106,6 +113,17 @@ export default function ProgramCreate() {
             />
           </div>
         </div>
+
+        {successMessage && (
+          <div className="program-create__message program-create__message--success">
+            {successMessage}
+          </div>
+        )}
+        {errorMessage && (
+          <div className="program-create__message program-create__message--error">
+            {errorMessage}
+          </div>
+        )}
 
         <div className="program-create__actions">
           <Button variant="secondary" size="md" onClick={handleCancel}>
