@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Input } from '@teammate-voices/design-system'
+import { Button } from '@teammate-voices/design-system'
 import Breadcrumb from '@/components/Breadcrumb'
 import ToggleSwitch from '@/components/ToggleSwitch'
 import { PROGRAM_TEMPLATES } from '@/types/program'
@@ -78,12 +78,12 @@ export default function ProgramCreate() {
             <label className="program-create__label" htmlFor="program-name">
               Program name*
             </label>
-            <Input
+            <input
               id="program-name"
+              className="program-create__input"
               placeholder="Add name"
               value={name}
               onChange={e => setName(e.target.value)}
-              fullWidth
             />
             <span className="program-create__helper">Create a name for the program</span>
           </div>
@@ -94,12 +94,12 @@ export default function ProgramCreate() {
             <label className="program-create__label" htmlFor="description">
               Program description
             </label>
-            <Input
+            <input
               id="description"
+              className="program-create__input"
               placeholder="Add description"
               value={description}
               onChange={e => setDescription(e.target.value)}
-              fullWidth
             />
             <span className="program-create__helper">Add a description for the program</span>
           </div>
