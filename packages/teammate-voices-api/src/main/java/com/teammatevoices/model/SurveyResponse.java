@@ -1,9 +1,6 @@
 package com.teammatevoices.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,9 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "SURVEY_RESPONSES")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class SurveyResponse {
 
     @Id
@@ -41,4 +35,73 @@ public class SurveyResponse {
 
     @OneToMany(mappedBy = "response", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SurveyAnswer> answers = new ArrayList<>();
+
+    public SurveyResponse() {
+    }
+
+    public SurveyResponse(Long responseId, Survey survey, Long respondentUserId, LocalDateTime submittedAt, LocalDateTime startedAt, LocalDateTime createdAt, List<SurveyAnswer> answers) {
+        this.responseId = responseId;
+        this.survey = survey;
+        this.respondentUserId = respondentUserId;
+        this.submittedAt = submittedAt;
+        this.startedAt = startedAt;
+        this.createdAt = createdAt;
+        this.answers = answers;
+    }
+
+    public Long getResponseId() {
+        return responseId;
+    }
+
+    public void setResponseId(Long responseId) {
+        this.responseId = responseId;
+    }
+
+    public Survey getSurvey() {
+        return survey;
+    }
+
+    public void setSurvey(Survey survey) {
+        this.survey = survey;
+    }
+
+    public Long getRespondentUserId() {
+        return respondentUserId;
+    }
+
+    public void setRespondentUserId(Long respondentUserId) {
+        this.respondentUserId = respondentUserId;
+    }
+
+    public LocalDateTime getSubmittedAt() {
+        return submittedAt;
+    }
+
+    public void setSubmittedAt(LocalDateTime submittedAt) {
+        this.submittedAt = submittedAt;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<SurveyAnswer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<SurveyAnswer> answers) {
+        this.answers = answers;
+    }
 }

@@ -2,11 +2,9 @@ package com.teammatevoices.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
 import java.util.List;
 
-@Data
 public class QuestionDTO {
     private Long questionId;
 
@@ -21,4 +19,52 @@ public class QuestionDTO {
 
     private Boolean isRequired;
     private List<OptionDTO> options;
+
+    public Long getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Long questionId) {
+        this.questionId = questionId;
+    }
+
+    public String getQuestionText() {
+        return questionText;
+    }
+
+    public void setQuestionText(String questionText) {
+        this.questionText = questionText;
+    }
+
+    public String getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(String questionType) {
+        this.questionType = questionType;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public Boolean getIsRequired() {
+        return isRequired;
+    }
+
+    public void setIsRequired(Boolean isRequired) {
+        this.isRequired = isRequired;
+    }
+
+    public List<OptionDTO> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<OptionDTO> options) {
+        this.options = options;
+    }
 }

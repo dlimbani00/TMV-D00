@@ -1,9 +1,6 @@
 package com.teammatevoices.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,9 +8,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ASSIGNMENT_RULES")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class AssignmentRule {
 
     @Id
@@ -46,4 +40,91 @@ public class AssignmentRule {
     @UpdateTimestamp
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
+
+    public AssignmentRule() {
+    }
+
+    public AssignmentRule(Long ruleId, String ruleName, String participantType, String surveyStage, Long surveyId, Integer sendDayOffset, Boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.ruleId = ruleId;
+        this.ruleName = ruleName;
+        this.participantType = participantType;
+        this.surveyStage = surveyStage;
+        this.surveyId = surveyId;
+        this.sendDayOffset = sendDayOffset;
+        this.isActive = isActive;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getRuleId() {
+        return ruleId;
+    }
+
+    public void setRuleId(Long ruleId) {
+        this.ruleId = ruleId;
+    }
+
+    public String getRuleName() {
+        return ruleName;
+    }
+
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
+    }
+
+    public String getParticipantType() {
+        return participantType;
+    }
+
+    public void setParticipantType(String participantType) {
+        this.participantType = participantType;
+    }
+
+    public String getSurveyStage() {
+        return surveyStage;
+    }
+
+    public void setSurveyStage(String surveyStage) {
+        this.surveyStage = surveyStage;
+    }
+
+    public Long getSurveyId() {
+        return surveyId;
+    }
+
+    public void setSurveyId(Long surveyId) {
+        this.surveyId = surveyId;
+    }
+
+    public Integer getSendDayOffset() {
+        return sendDayOffset;
+    }
+
+    public void setSendDayOffset(Integer sendDayOffset) {
+        this.sendDayOffset = sendDayOffset;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

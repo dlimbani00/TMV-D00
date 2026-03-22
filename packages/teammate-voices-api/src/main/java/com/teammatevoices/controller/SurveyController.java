@@ -3,8 +3,8 @@ package com.teammatevoices.controller;
 import com.teammatevoices.dto.SurveyDTO;
 import com.teammatevoices.service.SurveyService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +13,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/surveys")
-@RequiredArgsConstructor
-@Slf4j
 public class SurveyController {
 
+    private static final Logger log = LoggerFactory.getLogger(SurveyController.class);
+
     private final SurveyService surveyService;
+
+    public SurveyController(SurveyService surveyService) {
+        this.surveyService = surveyService;
+    }
 
     @GetMapping
     public ResponseEntity<List<SurveyDTO>> getAllSurveys() {

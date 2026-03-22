@@ -8,8 +8,8 @@ import com.teammatevoices.model.Survey;
 import com.teammatevoices.model.SurveyOption;
 import com.teammatevoices.model.SurveyQuestion;
 import com.teammatevoices.repository.SurveyRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +17,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class SurveyService {
 
+    private static final Logger log = LoggerFactory.getLogger(SurveyService.class);
+
     private final SurveyRepository surveyRepository;
+
+    public SurveyService(SurveyRepository surveyRepository) {
+        this.surveyRepository = surveyRepository;
+    }
 
     @Transactional(readOnly = true)
     public List<SurveyDTO> getAllSurveys() {

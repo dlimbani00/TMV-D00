@@ -1,18 +1,12 @@
 package com.teammatevoices.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "SURVEY_OPTIONS")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class SurveyOption {
 
     @Id
@@ -36,4 +30,64 @@ public class SurveyOption {
     @CreationTimestamp
     @Column(name = "CREATED_AT", updatable = false)
     private LocalDateTime createdAt;
+
+    public SurveyOption() {
+    }
+
+    public SurveyOption(Long optionId, SurveyQuestion question, String optionText, Integer optionValue, Integer sortOrder, LocalDateTime createdAt) {
+        this.optionId = optionId;
+        this.question = question;
+        this.optionText = optionText;
+        this.optionValue = optionValue;
+        this.sortOrder = sortOrder;
+        this.createdAt = createdAt;
+    }
+
+    public Long getOptionId() {
+        return optionId;
+    }
+
+    public void setOptionId(Long optionId) {
+        this.optionId = optionId;
+    }
+
+    public SurveyQuestion getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(SurveyQuestion question) {
+        this.question = question;
+    }
+
+    public String getOptionText() {
+        return optionText;
+    }
+
+    public void setOptionText(String optionText) {
+        this.optionText = optionText;
+    }
+
+    public Integer getOptionValue() {
+        return optionValue;
+    }
+
+    public void setOptionValue(Integer optionValue) {
+        this.optionValue = optionValue;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
