@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, CardBody, Button, Input } from '@teammate-voices/design-system'
+import { Card, CardBody, Button, Input } from '../design-system'
 import { api } from '@/services/api'
 import type { Participant } from '@/types/participant'
 

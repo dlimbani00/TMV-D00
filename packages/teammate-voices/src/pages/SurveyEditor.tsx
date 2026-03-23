@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Button, Input } from '@teammate-voices/design-system'
+import { Button, Input } from '../design-system'
 import Breadcrumb from '@/components/Breadcrumb'
 import TabBar from '@/components/TabBar'
 import StatusPill from '@/components/StatusPill'
@@ -44,6 +44,7 @@ export default function SurveyEditor() {
   const [activeTab, setActiveTab] = useState<SurveyTab>('details')
   const [loading, setLoading] = useState(isEditMode)
   const [saving, setSaving] = useState(false)
+  const [saveMessage, setSaveMessage] = useState('')
 
   useEffect(() => {
     api.getPrograms()
@@ -64,13 +65,18 @@ export default function SurveyEditor() {
   const handleSave = async () => {
     if (!survey.title?.trim()) return
     setSaving(true)
+    setSaveMessage('')
     try {
       if (isEditMode && survey.surveyId) {
-        await api.updateSurvey(survey.surveyId, survey)
+        const updated = await api.updateSurvey(survey.surveyId, survey)
+        setSurvey({ ...updated, pages: updated.pages || [] })
       } else {
         const created = await api.createSurvey(survey)
+        setSurvey({ ...created, pages: created.pages || [] })
         navigate(`/surveys/${created.surveyId}/edit`, { replace: true })
       }
+      setSaveMessage('Survey saved successfully')
+      setTimeout(() => setSaveMessage(''), 3000)
     } catch {
       alert('Failed to save survey')
     } finally {
@@ -139,20 +145,21 @@ export default function SurveyEditor() {
         </div>
         <div className="survey-editor__header-actions">
           {isEditMode && (
-            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+            <Button variant="destructive" size="sm" onClick={handleDelete}>Delete</Button>
           )}
-          <Button variant="secondary" onClick={() => navigate('/surveys')}>Cancel</Button>
-          <Button variant="ghost" onClick={handlePublish}>Publish</Button>
+          <Button variant="secondary" size="sm" onClick={() => navigate('/surveys')}>Cancel</Button>
+          <Button variant="secondary" size="sm" onClick={handlePublish}>Publish</Button>
         </div>
       </div>
 
-      <TabBar
-        tabs={SURVEY_TABS}
-        activeTab={activeTab}
-        onChange={(key) => setActiveTab(key as SurveyTab)}
-      />
+      <div className="survey-editor__card">
+        <TabBar
+          tabs={SURVEY_TABS}
+          activeTab={activeTab}
+          onChange={(key) => setActiveTab(key as SurveyTab)}
+        />
 
-      <div className="survey-editor__content">
+        <div className={`survey-editor__content${activeTab === 'formBuilder' ? ' survey-editor__content--form-builder' : ''}`}>
         {activeTab === 'details' && (
           <>
             <h2 className="survey-editor__section-title">Survey information</h2>
@@ -206,8 +213,9 @@ export default function SurveyEditor() {
             <hr className="survey-editor__divider" />
 
             <div className="survey-editor__bottom-actions">
-              <Button variant="secondary" onClick={handleSave} loading={saving}>Save</Button>
-              <Button variant="primary" onClick={handleNext}>Next</Button>
+              {saveMessage && <span className="survey-editor__save-message">{saveMessage}</span>}
+              <Button variant="secondary" size="sm" onClick={handleSave} loading={saving}>Save</Button>
+              <Button variant="primary" size="sm" onClick={handleNext}>Next</Button>
             </div>
           </>
         )}
@@ -219,6 +227,8 @@ export default function SurveyEditor() {
             onSave={handleSave}
             onCancel={() => navigate('/surveys')}
             saving={saving}
+            saveMessage={saveMessage}
+            detailsComplete={!!survey.title?.trim()}
           />
         )}
 
@@ -242,6 +252,7 @@ export default function SurveyEditor() {
             <p style={{ fontSize: 14 }}>Survey settings coming soon.</p>
           </div>
         )}
+        </div>
       </div>
     </div>
   )

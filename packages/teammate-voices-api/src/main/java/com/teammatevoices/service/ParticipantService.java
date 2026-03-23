@@ -58,9 +58,13 @@ public class ParticipantService {
         dto.setFullName(p.getFullName());
         dto.setEmail(p.getEmail());
         dto.setParticipantType(p.getParticipantType());
+        dto.setStandardId(p.getStandardId());
+        dto.setManagerName(p.getManagerName());
+        dto.setHierarchyCode(p.getHierarchyCode());
         dto.setTrainingProgram(p.getTrainingProgram());
         dto.setCohort(p.getCohort());
         dto.setStartDate(p.getStartDate());
+        dto.setMidPointDate(p.getMidPointDate());
         dto.setExpectedEndDate(p.getExpectedEndDate());
         dto.setIsActive(p.getIsActive());
         dto.setCreatedAt(p.getCreatedAt());
@@ -74,9 +78,13 @@ public class ParticipantService {
         p.setFullName(dto.getFullName());
         p.setEmail(dto.getEmail());
         p.setParticipantType(dto.getParticipantType());
+        p.setStandardId(dto.getStandardId());
+        p.setManagerName(dto.getManagerName());
+        p.setHierarchyCode(dto.getHierarchyCode());
         p.setTrainingProgram(dto.getTrainingProgram());
         p.setCohort(dto.getCohort());
         p.setStartDate(dto.getStartDate());
+        p.setMidPointDate(dto.getMidPointDate());
         p.setExpectedEndDate(dto.getExpectedEndDate());
         p.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
         return p;

@@ -1,17 +1,60 @@
-version: "3.9"
+name: teammate-voices
 
 services:
-  oracle-db:
+  db:
     image: gvenzl/oracle-free:23-slim
     ports:
       - "1521:1521"
-      - "5500:5500"
     environment:
       ORACLE_PASSWORD: "ChangeMe123"
       APP_USER: "teammate_voices"
       APP_USER_PASSWORD: "ChangeMe123"
     volumes:
       - oracle-data:/opt/oracle/oradata
+    networks:
+      - tv-network
+    healthcheck:
+      test: ["CMD-SHELL", "healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  backend:
+    build:
+      context: ./packages/teammate-voices-api
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: db
+      DB_PORT: "1521"
+      DB_SERVICE: FREEPDB1
+      DB_USER: teammate_voices
+      DB_PASSWORD: ChangeMe123
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tv-network
+    restart: on-failure
+
+  frontend:
+    build:
+      context: ./packages/teammate-voices
+      dockerfile: Dockerfile
+    ports:
+      - "5175:5175"
+    environment:
+      VITE_API_URL: http://localhost:8081/api
+    depends_on:
+      - backend
+    networks:
+      - tv-network
+
+networks:
+  tv-network:
+    driver: bridge
 
 volumes:
   oracle-data:

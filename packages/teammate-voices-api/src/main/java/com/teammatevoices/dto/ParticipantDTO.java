@@ -21,9 +21,13 @@ public class ParticipantDTO {
     @NotBlank(message = "Participant type is required")
     private String participantType;
 
+    private String standardId;
+    private String managerName;
+    private String hierarchyCode;
     private String trainingProgram;
     private String cohort;
     private LocalDate startDate;
+    private LocalDate midPointDate;
     private LocalDate expectedEndDate;
     private Boolean isActive;
     private LocalDateTime createdAt;
@@ -61,6 +65,30 @@ public class ParticipantDTO {
         this.participantType = participantType;
     }
 
+    public String getStandardId() {
+        return standardId;
+    }
+
+    public void setStandardId(String standardId) {
+        this.standardId = standardId;
+    }
+
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
+
+    public String getHierarchyCode() {
+        return hierarchyCode;
+    }
+
+    public void setHierarchyCode(String hierarchyCode) {
+        this.hierarchyCode = hierarchyCode;
+    }
+
     public String getTrainingProgram() {
         return trainingProgram;
     }
@@ -83,6 +111,14 @@ public class ParticipantDTO {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public LocalDate getMidPointDate() {
+        return midPointDate;
+    }
+
+    public void setMidPointDate(LocalDate midPointDate) {
+        this.midPointDate = midPointDate;
     }
 
     public LocalDate getExpectedEndDate() {

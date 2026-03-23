@@ -60,4 +60,11 @@ public class SurveyController {
         log.info("POST /surveys/{}/publish", id);
         return ResponseEntity.ok(surveyService.publishSurvey(id));
     }
+
+    @PostMapping("/{id}/clone")
+    public ResponseEntity<SurveyDTO> cloneSurvey(@PathVariable Long id) {
+        log.info("POST /surveys/{}/clone", id);
+        SurveyDTO cloned = surveyService.cloneSurvey(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cloned);
+    }
 }

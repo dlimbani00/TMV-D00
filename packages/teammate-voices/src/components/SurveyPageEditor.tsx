@@ -162,11 +162,11 @@ export default function SurveyPageEditor({ page, onUpdate, onDuplicate, onDelete
         </>
       ) : (
         <>
-          <div className="page-editor__questions-card">
-            {page.questions.map((q, idx) => {
-              const qid = generateQuestionId(page.questions.slice(0, idx))
-              return (
-                <div key={q.questionId ?? idx} className="question-editor">
+          {page.questions.map((q, idx) => {
+            const qid = generateQuestionId(page.questions.slice(0, idx))
+            return (
+              <div key={q.questionId ?? idx} className="page-editor__questions-card">
+                <div className="question-editor">
                   <div className="question-editor__header">
                     <span className="question-editor__id">{qid}</span>
                     <div className="question-editor__actions">
@@ -230,45 +230,47 @@ export default function SurveyPageEditor({ page, onUpdate, onDuplicate, onDelete
                     </FormField>
                   </div>
                 </div>
-              )
-            })}
-            <p className="page-editor__questions-empty">
-              Add a question from the question types dropdown below.
-            </p>
-          </div>
+
+                <div className="question-editor__add-inline">
+                  <p className="page-editor__questions-empty">
+                    Add a question from the question types dropdown below.
+                  </p>
+                </div>
+
+                <div className="question-editor__type-section">
+                  <div className="question-editor__type-row">
+                    <FormField label="Question type">
+                      <select
+                        className="question-editor__select"
+                        value={newQuestionType}
+                        onChange={(e) => setNewQuestionType(e.target.value)}
+                      >
+                        <option value="">Select Question type</option>
+                        {QUESTION_TYPES.map(t => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                    </FormField>
+
+                    <FormField label="Secondary type" required>
+                      <select
+                        className="question-editor__select"
+                        value={newSecondaryType}
+                        onChange={(e) => setNewSecondaryType(e.target.value)}
+                      >
+                        <option value="">Secondary type</option>
+                      </select>
+                    </FormField>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
 
           <div className="question-editor__add-section">
-            <div className="question-editor__add-card">
-              <div className="question-editor__type-row">
-                <FormField label="Question type">
-                  <select
-                    className="question-editor__select"
-                    value={newQuestionType}
-                    onChange={(e) => setNewQuestionType(e.target.value)}
-                  >
-                    <option value="">Select Question type</option>
-                    {QUESTION_TYPES.map(t => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                </FormField>
-
-                <FormField label="Secondary type" required>
-                  <select
-                    className="question-editor__select"
-                    value={newSecondaryType}
-                    onChange={(e) => setNewSecondaryType(e.target.value)}
-                  >
-                    <option value="">Secondary type</option>
-                  </select>
-                </FormField>
-              </div>
-              <div className="question-editor__add-actions">
-                <Button variant="secondary" size="sm" onClick={handleAddQuestion} disabled={!newQuestionType}>
-                  Add Question
-                </Button>
-              </div>
-            </div>
+            <Button variant="secondary" size="sm" onClick={handleAddQuestion} disabled={!newQuestionType}>
+              Add Question
+            </Button>
           </div>
         </>
       )}

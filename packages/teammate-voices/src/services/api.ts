@@ -33,25 +33,29 @@ class TeammateVoicesAPI {
 
   // Surveys
   async getSurveys(): Promise<Survey[]> {
-    return this.request<Survey[]>('/surveys')
+    const surveys = await this.request<Survey[]>('/surveys')
+    return surveys.map(this.deserializeSurveyPages)
   }
 
   async getSurvey(id: number): Promise<Survey> {
-    return this.request<Survey>(`/surveys/${id}`)
+    const survey = await this.request<Survey>(`/surveys/${id}`)
+    return this.deserializeSurveyPages(survey)
   }
 
   async createSurvey(survey: Partial<Survey>): Promise<Survey> {
-    return this.request<Survey>('/surveys', {
+    const result = await this.request<Survey>('/surveys', {
       method: 'POST',
-      body: JSON.stringify(survey),
+      body: JSON.stringify(this.serializeSurveyPages(survey)),
     })
+    return this.deserializeSurveyPages(result)
   }
 
   async updateSurvey(id: number, survey: Partial<Survey>): Promise<Survey> {
-    return this.request<Survey>(`/surveys/${id}`, {
+    const result = await this.request<Survey>(`/surveys/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(survey),
+      body: JSON.stringify(this.serializeSurveyPages(survey)),
     })
+    return this.deserializeSurveyPages(result)
   }
 
   async deleteSurvey(id: number): Promise<void> {
@@ -60,6 +64,11 @@ class TeammateVoicesAPI {
 
   async publishSurvey(id: number): Promise<Survey> {
     return this.request<Survey>(`/surveys/${id}/publish`, { method: 'POST' })
+  }
+
+  async cloneSurvey(id: number): Promise<Survey> {
+    const result = await this.request<Survey>(`/surveys/${id}/clone`, { method: 'POST' })
+    return this.deserializeSurveyPages(result)
   }
 
   // Programs
@@ -120,6 +129,26 @@ class TeammateVoicesAPI {
   // Dispatches
   async getDispatches(): Promise<Dispatch[]> {
     return this.request<Dispatch[]>('/dispatches')
+  }
+
+  // pages is stored as a JSON string in the backend but as SurveyPage[] on the frontend
+  private serializeSurveyPages(survey: Partial<Survey>): Record<string, unknown> {
+    const { pages, ...rest } = survey
+    return {
+      ...rest,
+      pages: pages != null ? JSON.stringify(pages) : null,
+    }
+  }
+
+  private deserializeSurveyPages(survey: Survey): Survey {
+    if (typeof survey.pages === 'string') {
+      try {
+        return { ...survey, pages: JSON.parse(survey.pages) }
+      } catch {
+        return { ...survey, pages: [] }
+      }
+    }
+    return survey
   }
 }
 

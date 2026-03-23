@@ -1,23 +1,84 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { Button } from '@teammate-voices/design-system'
+import { useState, useEffect, useRef, useCallback, useMemo, type ChangeEvent } from 'react'
+import { createPortal } from 'react-dom'
+import { useNavigate } from 'react-router-dom'
+import { Button } from '../design-system'
 import Breadcrumb from '@/components/Breadcrumb'
-import DataTable from '@/components/DataTable'
-import StatusPill from '@/components/StatusPill'
-import type { Column } from '@/components/DataTable'
 import { api } from '@/services/api'
 import type { Survey } from '@/types/survey'
 import type { Program } from '@/types/program'
+import { AgGridReact } from 'ag-grid-react'
+import type { ColDef, SizeColumnsToFitGridStrategy } from 'ag-grid-community'
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'
+
+ModuleRegistry.registerModules([AllCommunityModule])
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return ''
   return dateStr.substring(0, 10)
 }
 
+const statuses: Record<string, string> = {
+  all: 'All',
+  ACTIVE: 'Active',
+  DRAFT: 'Draft',
+  CLOSED: 'Closed',
+}
+
+const paginationPageSizeSelector = [5, 10, 20]
+
+function ActionsCellRenderer({ data, onEdit, onClone }: { data: Survey; onEdit: (id: number) => void; onClone: (id: number) => void }) {
+  const [open, setOpen] = useState(false)
+  const [pos, setPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (
+        menuRef.current && !menuRef.current.contains(e.target as Node) &&
+        triggerRef.current && !triggerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false)
+      }
+    }
+    if (open) document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open])
+
+  const handleToggle = () => {
+    if (!open && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect()
+      setPos({ top: rect.bottom + 4, left: rect.right - 120 })
+    }
+    setOpen(!open)
+  }
+
+  if (!data) return null
+  return (
+    <div className="ag-actions-wrap">
+      <button ref={triggerRef} className="ag-actions-trigger" onClick={handleToggle} title="Actions">⋮</button>
+      {open && createPortal(
+        <div
+          ref={menuRef}
+          className="ag-actions-dropdown"
+          style={{ top: pos.top, left: pos.left }}
+        >
+          <button className="ag-actions-dropdown__item" onClick={() => { setOpen(false); onEdit(data.surveyId) }}>Edit</button>
+          <button className="ag-actions-dropdown__item" onClick={() => { setOpen(false); onClone(data.surveyId) }}>Clone</button>
+        </div>,
+        document.body,
+      )}
+    </div>
+  )
+}
+
 export default function SurveyList() {
   const [surveys, setSurveys] = useState<Survey[]>([])
   const [programs, setPrograms] = useState<Program[]>([])
   const [loading, setLoading] = useState(true)
+  const [quickFilterText, setQuickFilterText] = useState<string>()
+  const [activeTab, setActiveTab] = useState('all')
+  const gridRef = useRef<AgGridReact>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -27,63 +88,124 @@ export default function SurveyList() {
       .finally(() => setLoading(false))
   }, [])
 
-  const getProgramName = (survey: Survey): string => {
-    if (!survey.programId) return ''
-    const program = programs.find(p => p.programId === survey.programId)
-    return program?.name ?? ''
-  }
+  const programMap = useMemo(() => {
+    const map: Record<number, string> = {}
+    programs.forEach(p => { map[p.programId] = p.name })
+    return map
+  }, [programs])
 
-  const columns: Column<Survey>[] = [
+  const handleClone = useCallback(async (surveyId: number) => {
+    try {
+      const cloned = await api.cloneSurvey(surveyId)
+      setSurveys(prev => [...prev, cloned])
+    } catch {
+      alert('Failed to clone survey')
+    }
+  }, [])
+
+  const columnDefs = useMemo<ColDef[]>(() => [
     {
-      key: 'program',
-      label: 'Program',
-      render: (row) => getProgramName(row),
+      field: 'programId',
+      headerName: 'Program',
+      valueGetter: (params) => params.data?.programId ? (programMap[params.data.programId] || '') : '',
+      flex: 1,
+      minWidth: 130,
     },
     {
-      key: 'title',
-      label: 'Survey name',
-      render: (row) => (
-        <Link to={`/surveys/${row.surveyId}/edit`} className="dt__link">
-          {row.title}
-        </Link>
-      ),
+      field: 'title',
+      headerName: 'Survey Name',
+      flex: 1.5,
+      minWidth: 180,
+      cellRenderer: (params: { data: Survey }) => params.data?.title || '',
+      onCellClicked: (params) => {
+        if (params.data) navigate(`/surveys/${params.data.surveyId}/edit`)
+      },
+      cellStyle: { color: '#007aff', cursor: 'pointer', fontWeight: 500 },
     },
     {
-      key: 'description',
-      label: 'Summary',
-      render: (row) => row.description || '',
+      field: 'description',
+      headerName: 'Summary',
+      flex: 1.5,
+      minWidth: 140,
     },
     {
-      key: 'cycle',
-      label: 'Cycle',
-      render: (row) => row.cycle || '',
+      field: 'cycle',
+      headerName: 'Cycle',
+      width: 110,
     },
     {
-      key: 'status',
-      label: 'Active',
-      render: (row) => (row.status === 'ACTIVE' ? 'Active' : 'Inactive'),
+      field: 'status',
+      headerName: 'Status',
+      width: 110,
+      cellRenderer: (params: { value: string }) => {
+        if (!params.value) return ''
+        const isActive = params.value === 'ACTIVE'
+        return `<span class="ag-status-pill ag-status-pill--${isActive ? 'active' : 'draft'}">${isActive ? 'Active' : 'Draft'}</span>`
+      },
     },
     {
-      key: 'buildStatus',
-      label: 'Build status',
-      render: (row) => (
-        <StatusPill
-          label={row.buildStatus === 'PUBLISHED' ? 'Published' : 'Draft'}
-          variant={row.buildStatus === 'PUBLISHED' ? 'active' : 'draft'}
-        />
-      ),
+      field: 'buildStatus',
+      headerName: 'Build Status',
+      width: 130,
+      cellRenderer: (params: { value: string }) => {
+        if (!params.value) return ''
+        const isPublished = params.value === 'PUBLISHED'
+        return `<span class="ag-status-pill ag-status-pill--${isPublished ? 'published' : 'draft'}">${isPublished ? 'Published' : 'Draft'}</span>`
+      },
     },
     {
-      key: 'updatedAt',
-      label: 'Last updated',
-      render: (row) => formatDate(row.updatedAt),
+      field: 'updatedAt',
+      headerName: 'Last Updated',
+      width: 140,
+      valueFormatter: (params) => formatDate(params.value),
     },
     {
-      key: 'createdAt',
-      label: 'Date created',
-      render: (row) => formatDate(row.createdAt),
+      field: 'createdAt',
+      headerName: 'Date Created',
+      width: 140,
+      valueFormatter: (params) => formatDate(params.value),
     },
-  ]
+    {
+      headerName: 'Actions',
+      colId: 'actions',
+      width: 100,
+      sortable: false,
+      filter: false,
+      resizable: false,
+      cellRendererParams: {
+        onEdit: (id: number) => navigate(`/surveys/${id}/edit`),
+        onClone: handleClone,
+      },
+      cellRenderer: ActionsCellRenderer,
+    },
+  ], [programMap, navigate, handleClone])
+
+  const defaultColDef = useMemo<ColDef>(() => ({
+    sortable: true,
+    filter: false,
+    resizable: true,
+  }), [])
+
+  const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(() => ({
+    type: 'fitGridWidth',
+  }), [])
+
+  const onFilterTextBoxChanged = useCallback(
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => setQuickFilterText(value),
+    [],
+  )
+
+  const handleTabClick = useCallback((status: string) => {
+    setActiveTab(status)
+    if (!gridRef.current?.api) return
+    if (status === 'all') {
+      gridRef.current.api.setColumnFilterModel('status', null)
+        .then(() => gridRef.current!.api.onFilterChanged())
+    } else {
+      gridRef.current.api.setColumnFilterModel('status', { values: [status] })
+        .then(() => gridRef.current!.api.onFilterChanged())
+    }
+  }, [])
 
   return (
     <div className="survey-library">
@@ -95,23 +217,59 @@ export default function SurveyList() {
       <h1 className="survey-library__title">Survey library</h1>
 
       <div className="survey-library__table-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 16px 8px' }}>
-          <h2 className="survey-library__section-title">Surveys</h2>
-          <Button variant="secondary" size="sm" onClick={() => navigate('/surveys/new')}>
-            Create survey
-          </Button>
+        <div className="survey-library__toolbar">
+          <div className="survey-library__tabs">
+            {Object.entries(statuses).map(([key, label]) => (
+              <button
+                key={key}
+                className={`survey-library__tab-btn${activeTab === key ? ' survey-library__tab-btn--active' : ''}`}
+                onClick={() => handleTabClick(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="survey-library__toolbar-right">
+            <div className="survey-library__search-wrap">
+              <svg className="survey-library__search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path fillRule="evenodd" clipRule="evenodd" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm-.82 4.74a6 6 0 1 1 1.06-1.06l2.79 2.79a.75.75 0 1 1-1.06 1.06l-2.79-2.79Z" fill="currentColor"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search surveys..."
+                onInput={onFilterTextBoxChanged}
+                className="survey-library__search-input"
+              />
+            </div>
+
+            <Button variant="primary" size="sm" onClick={() => navigate('/surveys/new')}>
+              + Create Survey
+            </Button>
+          </div>
         </div>
 
         {loading ? (
           <p style={{ textAlign: 'center', padding: 60, color: '#86868b' }}>Loading surveys...</p>
         ) : (
-          <DataTable
-            columns={columns}
-            data={surveys}
-            emptyMessage="No surveys available"
-            rowKey={(row) => row.surveyId}
-            onRowAction={(row) => navigate(`/surveys/${row.surveyId}/edit`)}
-          />
+          <div className="ag-theme-quartz survey-library__grid">
+            <AgGridReact
+              ref={gridRef}
+              rowData={surveys}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              autoSizeStrategy={autoSizeStrategy}
+
+              pagination
+              paginationPageSize={10}
+              paginationPageSizeSelector={paginationPageSizeSelector}
+              quickFilterText={quickFilterText}
+              domLayout="autoHeight"
+              rowHeight={52}
+              getRowId={(params) => String(params.data.surveyId)}
+              overlayNoRowsTemplate="<span style='padding:40px;color:#86868b;font-size:14px'>No surveys found</span>"
+            />
+          </div>
         )}
       </div>
     </div>

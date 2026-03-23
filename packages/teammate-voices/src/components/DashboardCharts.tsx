@@ -1,4 +1,4 @@
-import { Card, CardBody } from '@teammate-voices/design-system'
+import { Card, CardBody } from '../design-system'
 import BarChart from '@/components/BarChart'
 import DonutChart from '@/components/DonutChart'
 import {

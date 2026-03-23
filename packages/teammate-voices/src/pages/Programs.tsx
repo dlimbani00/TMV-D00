@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Button } from '@teammate-voices/design-system'
+import { Button } from '../design-system'
 import Breadcrumb from '@/components/Breadcrumb'
 import ToggleSwitch from '@/components/ToggleSwitch'
 import ProgramCard from '@/components/ProgramCard'

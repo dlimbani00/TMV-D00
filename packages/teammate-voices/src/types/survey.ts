@@ -44,11 +44,28 @@ export const SURVEY_TABS: Array<{ key: SurveyTab; label: string }> = [
 export interface SurveyQuestion {
   questionId?: number
   questionText: string
-  questionType: 'RATING_SCALE' | 'MULTIPLE_CHOICE' | 'TEXT' | 'MATRIX'
+  questionType: string
+  questionLabel?: string
+  questionDescription?: string
+  showDescription?: boolean
+  secondaryType?: string
   sortOrder: number
   isRequired: boolean
   options?: SurveyOption[]
 }
+
+export const QUESTION_TYPES = [
+  'Checkboxes',
+  'Grid Rating Scale',
+  'Multiselect',
+  'Radio Buttons',
+  'Rating Scale',
+  'Single Select',
+  'Single-line Input',
+  'Sliding Scale',
+  'Static Text',
+  'Text Area',
+] as const
 
 export interface SurveyOption {
   optionId?: number

@@ -1335,7 +1335,8 @@ input, textarea, select {
 
 .page-editor__questions-card {
   background: #fff;
-  border-radius: 8px;
+  border: 1px solid #e5e5ea;
+  border-radius: 12px;
   padding: 24px;
   margin-top: 24px;
 }
@@ -1349,11 +1350,8 @@ input, textarea, select {
 
 /* ===== Question Editor ===== */
 .question-editor {
-  border: 1px solid #e5e5ea;
-  border-radius: 8px;
-  padding: 16px 20px;
+  padding: 0 0 16px;
   margin-bottom: 16px;
-  background: #fafafa;
 }
 
 .question-editor__header {
@@ -1421,6 +1419,24 @@ input, textarea, select {
   border-radius: 8px;
   padding: 16px 20px;
   background: #fafafa;
+}
+
+.question-editor__add-inline {
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  padding: 8px 20px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.question-editor__add-inline .page-editor__questions-empty {
+  padding: 16px 0;
+}
+
+.question-editor__type-section {
+  border-top: 1px solid #e5e5ea;
+  padding-top: 20px;
+  margin-top: 20px;
 }
 
 .question-editor__add-actions {

@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, CardFooter, Button } from '@teammate-voices/design-system'
+import { Card, CardHeader, CardBody, CardFooter, Button } from '../design-system'
 import type { Survey } from '@/types/survey'
 
 const STATUS_PILL_STYLES: Record<string, { bg: string; color: string }> = {

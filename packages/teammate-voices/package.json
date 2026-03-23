@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.94.5",
-    "@teammate-voices/design-system": "*",
+    "ag-grid-community": "^35.1.0",
+    "ag-grid-react": "^35.1.0",
     "axios": "^1.13.6",
     "clsx": "^2.1.0",
     "react": "^18.2.0",

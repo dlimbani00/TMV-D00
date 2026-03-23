@@ -30,8 +30,20 @@ public class Participant {
     @Column(name = "COHORT", length = 100)
     private String cohort;
 
+    @Column(name = "STANDARD_ID", length = 20)
+    private String standardId;
+
+    @Column(name = "MANAGER_NAME", length = 255)
+    private String managerName;
+
+    @Column(name = "HIERARCHY_CODE", length = 20)
+    private String hierarchyCode;
+
     @Column(name = "START_DATE", nullable = false)
     private LocalDate startDate;
+
+    @Column(name = "MID_POINT_DATE")
+    private LocalDate midPointDate;
 
     @Column(name = "EXPECTED_END_DATE")
     private LocalDate expectedEndDate;
@@ -112,12 +124,44 @@ public class Participant {
         this.cohort = cohort;
     }
 
+    public String getStandardId() {
+        return standardId;
+    }
+
+    public void setStandardId(String standardId) {
+        this.standardId = standardId;
+    }
+
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
+
+    public String getHierarchyCode() {
+        return hierarchyCode;
+    }
+
+    public void setHierarchyCode(String hierarchyCode) {
+        this.hierarchyCode = hierarchyCode;
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public LocalDate getMidPointDate() {
+        return midPointDate;
+    }
+
+    public void setMidPointDate(LocalDate midPointDate) {
+        this.midPointDate = midPointDate;
     }
 
     public LocalDate getExpectedEndDate() {

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '@teammate-voices/design-system'
+import { Button } from '../design-system'
 import DataTable from '@/components/DataTable'
 import { MOCK_ACTIONS } from '@/types/dashboard'
 import type { ActionItem } from '@/types/dashboard'

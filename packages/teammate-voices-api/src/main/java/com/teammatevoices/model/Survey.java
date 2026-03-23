@@ -31,6 +31,19 @@ public class Survey {
     @Column(name = "STATUS", nullable = false, length = 20)
     private String status = "DRAFT";
 
+    @Column(name = "BUILD_STATUS", nullable = false, length = 20)
+    private String buildStatus = "DRAFT";
+
+    @Column(name = "PROGRAM_ID")
+    private Long programId;
+
+    @Column(name = "CYCLE", length = 100)
+    private String cycle;
+
+    @Lob
+    @Column(name = "PAGES")
+    private String pages;
+
     @Column(name = "PARTICIPANT_TYPE", length = 30)
     private String participantType = "ALL";
 
@@ -216,6 +229,38 @@ public class Survey {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getBuildStatus() {
+        return buildStatus;
+    }
+
+    public void setBuildStatus(String buildStatus) {
+        this.buildStatus = buildStatus;
+    }
+
+    public Long getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(Long programId) {
+        this.programId = programId;
+    }
+
+    public String getCycle() {
+        return cycle;
+    }
+
+    public void setCycle(String cycle) {
+        this.cycle = cycle;
+    }
+
+    public String getPages() {
+        return pages;
+    }
+
+    public void setPages(String pages) {
+        this.pages = pages;
     }
 
     public List<SurveyQuestion> getQuestions() {

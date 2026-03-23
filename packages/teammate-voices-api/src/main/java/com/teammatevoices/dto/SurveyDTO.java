@@ -19,6 +19,10 @@ public class SurveyDTO {
 
     private String templateType;
     private String status;
+    private String buildStatus;
+    private Long programId;
+    private String cycle;
+    private String pages;
     private String participantType;
     private String surveyStage;
     private String audienceSource;
@@ -69,6 +73,38 @@ public class SurveyDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getBuildStatus() {
+        return buildStatus;
+    }
+
+    public void setBuildStatus(String buildStatus) {
+        this.buildStatus = buildStatus;
+    }
+
+    public Long getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(Long programId) {
+        this.programId = programId;
+    }
+
+    public String getCycle() {
+        return cycle;
+    }
+
+    public void setCycle(String cycle) {
+        this.cycle = cycle;
+    }
+
+    public String getPages() {
+        return pages;
+    }
+
+    public void setPages(String pages) {
+        this.pages = pages;
     }
 
     public String getParticipantType() {

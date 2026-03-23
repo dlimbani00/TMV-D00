@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button } from '@teammate-voices/design-system'
+import { Button } from '../design-system'
 import Breadcrumb from '@/components/Breadcrumb'
 import ToggleSwitch from '@/components/ToggleSwitch'
 import { PROGRAM_TEMPLATES } from '@/types/program'

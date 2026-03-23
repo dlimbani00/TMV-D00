@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Card, CardBody, Button, Input } from '@teammate-voices/design-system'
+import { Card, CardBody, Button, Input } from '../design-system'
 import { api } from '@/services/api'
 import { TEAM_MATE_VOICES_QUESTIONS, RATING_SCALE_OPTIONS } from '@/types/survey'
 

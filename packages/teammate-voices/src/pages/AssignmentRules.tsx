@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, CardHeader, CardBody, CardFooter, Button } from '@teammate-voices/design-system'
+import { Card, CardHeader, CardBody, CardFooter, Button } from '../design-system'
 import { api } from '@/services/api'
 import type { AssignmentRule } from '@/types/participant'
 
