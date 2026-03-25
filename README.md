@@ -1,4 +1,4 @@
-# 🏗️ ARYA Design System - Complete Project
+
 
 A modern, accessible design system with integrated Survey Management System.
 
@@ -16,7 +16,7 @@ A modern, accessible design system with integrated Survey Management System.
 
 ---
 
-## 🎨 About ARYA Design System
+
 
 A modern, accessible design system inspired by Apple's design language. Built with React, TypeScript, and thoughtful attention to detail.
 
@@ -38,7 +38,7 @@ This is a **monorepo** with multiple packages:
 ```
 ARYA Design System/
 ├── packages/
-│   ├── arya-design-system/      ← Design system components
+│   ├     ← Design system components
 │   ├── empsurvey/               ← React Survey Frontend ✨
 │   └── empsurvey-api/           ← Spring Boot API Backend ✨
 ├── db/                          ← Database initialization scripts
