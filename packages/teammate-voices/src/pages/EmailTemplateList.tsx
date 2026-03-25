@@ -218,15 +218,12 @@ export default function EmailTemplateList() {
 
   const handleTabClick = useCallback((category: string) => {
     setActiveTab(category)
-    if (!gridRef.current?.api) return
-    if (category === 'all') {
-      gridRef.current.api.setColumnFilterModel('category', null)
-        .then(() => gridRef.current!.api.onFilterChanged())
-    } else {
-      gridRef.current.api.setColumnFilterModel('category', { values: [category] })
-        .then(() => gridRef.current!.api.onFilterChanged())
-    }
   }, [])
+
+  const filteredTemplates = useMemo(() => {
+    if (activeTab === 'all') return templates
+    return templates.filter(t => t.category === activeTab)
+  }, [templates, activeTab])
 
   return (
     <div className="survey-library">
@@ -276,7 +273,7 @@ export default function EmailTemplateList() {
           <div className="ag-theme-quartz survey-library__grid">
             <AgGridReact
               ref={gridRef}
-              rowData={templates}
+              rowData={filteredTemplates}
               columnDefs={columnDefs}
               defaultColDef={defaultColDef}
               autoSizeStrategy={autoSizeStrategy}

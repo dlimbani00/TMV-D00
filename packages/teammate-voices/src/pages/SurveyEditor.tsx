@@ -147,6 +147,7 @@ export default function SurveyEditor() {
   }, [activeTab, surveyId, emailAssignments])
 
   const isActive = survey.status === 'ACTIVE'
+  const isLocked = survey.status === 'ACTIVE' || survey.status === 'CLOSED'
 
   const handleSave = async () => {
     if (!survey.title?.trim()) return
@@ -190,6 +191,16 @@ export default function SurveyEditor() {
       setSurvey(updated)
     } catch {
       alert('Failed to publish survey')
+    }
+  }
+
+  const handleClone = async () => {
+    if (!survey.surveyId) return
+    try {
+      const cloned = await api.cloneSurvey(survey.surveyId)
+      navigate(`/surveys/${cloned.surveyId}/edit`)
+    } catch {
+      alert('Failed to clone survey')
     }
   }
 
@@ -239,11 +250,15 @@ export default function SurveyEditor() {
           </div>
         </div>
         <div className="survey-editor__header-actions">
-          {isEditMode && (
+          {isEditMode && !isLocked && (
             <Button variant="destructive" size="sm" onClick={handleDelete}>Delete</Button>
           )}
           <Button variant="secondary" size="sm" onClick={() => navigate('/surveys')}>Cancel</Button>
-          <Button variant="secondary" size="sm" onClick={handlePublish}>Publish</Button>
+          {isLocked ? (
+            <Button variant="primary" size="sm" onClick={handleClone}>Clone</Button>
+          ) : (
+            <Button variant="secondary" size="sm" onClick={handlePublish}>Publish</Button>
+          )}
         </div>
       </div>
 

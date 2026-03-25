@@ -9,7 +9,9 @@ import com.teammatevoices.model.Dispatch;
 import com.teammatevoices.model.Survey;
 import com.teammatevoices.model.SurveyAnswer;
 import com.teammatevoices.model.SurveyResponse;
+import com.teammatevoices.model.Program;
 import com.teammatevoices.repository.DispatchRepository;
+import com.teammatevoices.repository.ProgramRepository;
 import com.teammatevoices.repository.SurveyRepository;
 import com.teammatevoices.repository.SurveyResponseRepository;
 import org.slf4j.Logger;
@@ -30,13 +32,16 @@ public class ResponseService {
     private final SurveyRepository surveyRepository;
     private final SurveyResponseRepository responseRepository;
     private final DispatchRepository dispatchRepository;
+    private final ProgramRepository programRepository;
 
     public ResponseService(SurveyRepository surveyRepository,
                            SurveyResponseRepository responseRepository,
-                           DispatchRepository dispatchRepository) {
+                           DispatchRepository dispatchRepository,
+                           ProgramRepository programRepository) {
         this.surveyRepository = surveyRepository;
         this.responseRepository = responseRepository;
         this.dispatchRepository = dispatchRepository;
+        this.programRepository = programRepository;
     }
 
     /**
@@ -73,6 +78,9 @@ public class ResponseService {
         dispatch.setDispatchStatus("SUBMITTED");
         dispatch.setSubmittedAt(LocalDateTime.now());
         dispatchRepository.save(dispatch);
+
+        // Check if all dispatches for this survey are completed → update program to COMPLETED
+        updateProgramProgressIfAllComplete(survey);
 
         log.info("Response {} submitted via token for survey {}", response.getResponseId(), survey.getSurveyId());
         return response.getResponseId();
@@ -205,5 +213,27 @@ public class ResponseService {
         }
 
         return dto;
+    }
+
+    /**
+     * Check if all dispatches for a survey are submitted.
+     * If so, update the linked program's progress to COMPLETED.
+     */
+    private void updateProgramProgressIfAllComplete(Survey survey) {
+        if (survey.getProgramId() == null) return;
+
+        List<Dispatch> allDispatches = dispatchRepository.findBySurveyId(survey.getSurveyId());
+        if (allDispatches.isEmpty()) return;
+
+        boolean allSubmitted = allDispatches.stream()
+                .allMatch(d -> "SUBMITTED".equalsIgnoreCase(d.getDispatchStatus()));
+
+        if (allSubmitted) {
+            programRepository.findById(survey.getProgramId()).ifPresent(program -> {
+                program.setSurveyProgress("COMPLETED");
+                programRepository.save(program);
+                log.info("All dispatches submitted — updated program {} to COMPLETED", program.getProgramId());
+            });
+        }
     }
 }

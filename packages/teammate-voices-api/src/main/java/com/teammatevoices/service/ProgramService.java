@@ -3,6 +3,7 @@ package com.teammatevoices.service;
 import com.teammatevoices.dto.ProgramDTO;
 import com.teammatevoices.dto.ProgramDetailDTO;
 import com.teammatevoices.dto.ProgramDetailDTO.ParticipantStatusRow;
+import com.teammatevoices.exception.BusinessRuleException;
 import com.teammatevoices.exception.ResourceNotFoundException;
 import com.teammatevoices.model.Dispatch;
 import com.teammatevoices.model.Participant;
@@ -10,6 +11,7 @@ import com.teammatevoices.model.Program;
 import com.teammatevoices.repository.DispatchRepository;
 import com.teammatevoices.repository.ParticipantRepository;
 import com.teammatevoices.repository.ProgramRepository;
+import com.teammatevoices.repository.SurveyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,13 +29,24 @@ public class ProgramService {
     private final ProgramRepository programRepository;
     private final ParticipantRepository participantRepository;
     private final DispatchRepository dispatchRepository;
+    private final SurveyRepository surveyRepository;
 
     public ProgramService(ProgramRepository programRepository,
                           ParticipantRepository participantRepository,
-                          DispatchRepository dispatchRepository) {
+                          DispatchRepository dispatchRepository,
+                          SurveyRepository surveyRepository) {
         this.programRepository = programRepository;
         this.participantRepository = participantRepository;
         this.dispatchRepository = dispatchRepository;
+        this.surveyRepository = surveyRepository;
+    }
+
+    /** Guard: reject edits if any linked survey is ACTIVE */
+    private void requireEditableProgram(Long programId) {
+        if (surveyRepository.existsByProgramIdAndStatus(programId, "ACTIVE")) {
+            throw new BusinessRuleException(
+                "Cannot edit program: it has active surveys. Clone the survey to make changes.");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -60,6 +73,8 @@ public class ProgramService {
     @Transactional
     public ProgramDTO updateProgram(Long id, ProgramDTO dto) {
         log.info("Updating program: {}", id);
+        requireEditableProgram(id);
+
         Program program = programRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Program", id));
 
@@ -75,6 +90,8 @@ public class ProgramService {
     @Transactional
     public void deleteProgram(Long id) {
         log.info("Deleting program: {}", id);
+        requireEditableProgram(id);
+
         if (!programRepository.existsById(id)) {
             throw new ResourceNotFoundException("Program", id);
         }

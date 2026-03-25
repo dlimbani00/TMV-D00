@@ -1,8 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef, ChangeEvent } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from '../design-system'
 import Breadcrumb from '@/components/Breadcrumb'
 import StatusPill from '@/components/StatusPill'
+import { AgGridReact } from 'ag-grid-react'
+import type { ColDef, SizeColumnsToFitGridStrategy } from 'ag-grid-community'
+import { api } from '@/services/api'
+import type { ProgramDetail as ProgramDetailType, ParticipantStatusRow } from '@/types/program'
 
 function getStatusVariant(status: string): 'active' | 'draft' | 'closed' | 'default' {
   const s = status.toUpperCase()
@@ -11,8 +15,6 @@ function getStatusVariant(status: string): 'active' | 'draft' | 'closed' | 'defa
   if (s === 'CLOSED') return 'closed'
   return 'default'
 }
-import { api } from '@/services/api'
-import type { ProgramDetail as ProgramDetailType, ParticipantStatusRow } from '@/types/program'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   SUBMITTED:  { label: 'Completed',       color: '#166534', bg: '#dcfce7' },
@@ -25,8 +27,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 const DEFAULT_STATUS = { label: 'Not Dispatched', color: '#9ca3af', bg: '#f9fafb' }
 
-function DispatchStatusPill({ status }: { status: string | null }) {
-  const cfg = status ? STATUS_CONFIG[status] || DEFAULT_STATUS : DEFAULT_STATUS
+function DispatchStatusCellRenderer({ value }: { value: string | null }) {
+  const cfg = value ? STATUS_CONFIG[value] || DEFAULT_STATUS : DEFAULT_STATUS
   return (
     <span style={{
       display: 'inline-block',
@@ -43,13 +45,30 @@ function DispatchStatusPill({ status }: { status: string | null }) {
   )
 }
 
+function TypeCellRenderer({ value }: { value: string }) {
+  if (!value) return '—'
+  if (value === 'NEW_HIRE') return 'New Hire'
+  if (value === 'EXISTING_RESOURCE') return 'Existing'
+  return value
+}
+
+const statusFilters: Record<string, string> = {
+  ALL: 'All',
+  SUBMITTED: 'Completed',
+  SENT: 'Sent',
+  OPENED: 'Opened',
+  PENDING: 'Pending',
+  NOT_DISPATCHED: 'Not Dispatched',
+}
+
 export default function ProgramDetail() {
   const { programId } = useParams()
   const navigate = useNavigate()
+  const gridRef = useRef<AgGridReact>(null)
   const [detail, setDetail] = useState<ProgramDetailType | null>(null)
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('ALL')
+  const [quickFilterText, setQuickFilterText] = useState('')
+  const [activeTab, setActiveTab] = useState('ALL')
 
   useEffect(() => {
     if (!programId) return
@@ -59,6 +78,84 @@ export default function ProgramDetail() {
       .finally(() => setLoading(false))
   }, [programId, navigate])
 
+  const columnDefs = useMemo<ColDef[]>(() => [
+    {
+      field: 'fullName',
+      headerName: 'Name',
+      flex: 1.2,
+      minWidth: 150,
+      cellStyle: { fontWeight: 500 },
+    },
+    {
+      field: 'email',
+      headerName: 'Email',
+      flex: 1.5,
+      minWidth: 200,
+    },
+    {
+      field: 'cohort',
+      headerName: 'Cohort',
+      width: 110,
+      valueFormatter: (params) => params.value || '—',
+    },
+    {
+      field: 'participantType',
+      headerName: 'Type',
+      width: 120,
+      cellRenderer: TypeCellRenderer,
+    },
+    {
+      field: 'dispatchStatus',
+      headerName: 'Status',
+      width: 130,
+      cellRenderer: DispatchStatusCellRenderer,
+    },
+    {
+      field: 'surveyStage',
+      headerName: 'Stage',
+      width: 120,
+      valueFormatter: (params) => params.value ? params.value.replace(/_/g, ' ') : '—',
+    },
+    {
+      field: 'reminderCount',
+      headerName: 'Reminders',
+      width: 100,
+      valueFormatter: (params) => params.value > 0 ? String(params.value) : '—',
+    },
+    {
+      field: 'submittedAt',
+      headerName: 'Submitted',
+      width: 120,
+      valueFormatter: (params) => params.value ? params.value.substring(0, 10) : '—',
+    },
+  ], [])
+
+  const defaultColDef = useMemo<ColDef>(() => ({
+    sortable: true,
+    filter: false,
+    resizable: true,
+  }), [])
+
+  const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(() => ({
+    type: 'fitGridWidth',
+  }), [])
+
+  const onFilterTextBoxChanged = useCallback(
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => setQuickFilterText(value),
+    [],
+  )
+
+  const handleTabClick = useCallback((status: string) => {
+    setActiveTab(status)
+  }, [])
+
+  const filteredParticipants = useMemo(() => {
+    if (!detail) return []
+    if (activeTab === 'ALL') return detail.participants
+    if (activeTab === 'NOT_DISPATCHED') return detail.participants.filter((p: ParticipantStatusRow) => !p.dispatchStatus)
+    return detail.participants.filter((p: ParticipantStatusRow) => p.dispatchStatus === activeTab)
+  }, [detail, activeTab])
+
   if (loading) {
     return <p style={{ textAlign: 'center', padding: 60, color: '#86868b' }}>Loading program...</p>
   }
@@ -67,20 +164,7 @@ export default function ProgramDetail() {
     return <p style={{ textAlign: 'center', padding: 60, color: '#86868b' }}>Program not found.</p>
   }
 
-  const { program, participants, totalParticipants, completedCount, sentCount, pendingCount } = detail
-
-  // Filter participants
-  const filtered = participants.filter((p: ParticipantStatusRow) => {
-    const matchSearch = !search ||
-      p.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      p.email.toLowerCase().includes(search.toLowerCase()) ||
-      (p.cohort || '').toLowerCase().includes(search.toLowerCase())
-    const matchStatus = statusFilter === 'ALL' ||
-      (statusFilter === 'NOT_DISPATCHED' && !p.dispatchStatus) ||
-      p.dispatchStatus === statusFilter
-    return matchSearch && matchStatus
-  })
-
+  const { program, totalParticipants, completedCount, sentCount, pendingCount } = detail
   const progressLabel = (program.surveyProgress || 'NOT_STARTED').replace(/_/g, ' ')
 
   return (
@@ -169,83 +253,56 @@ export default function ProgramDetail() {
         </div>
       </div>
 
-      {/* Bottom Card: Participants Grid */}
-      <div className="program-detail__participants-card">
-        <div className="program-detail__participants-header">
-          <h3 className="program-detail__card-title">
-            Participants ({filtered.length}{filtered.length !== totalParticipants ? ` of ${totalParticipants}` : ''})
-          </h3>
-          <div className="program-detail__filters">
-            <input
-              className="program-detail__search"
-              type="text"
-              placeholder="Search by name, email, cohort..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-            <select
-              className="program-detail__status-filter"
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-            >
-              <option value="ALL">All Statuses</option>
-              <option value="SUBMITTED">Completed</option>
-              <option value="SENT">Sent</option>
-              <option value="OPENED">Opened</option>
-              <option value="PENDING">Pending</option>
-              <option value="FAILED">Failed</option>
-              <option value="EXPIRED">Expired</option>
-              <option value="NOT_DISPATCHED">Not Dispatched</option>
-            </select>
+      {/* Bottom Card: Participants AG Grid */}
+      <div className="survey-library__table-card">
+        <div className="survey-library__toolbar">
+          <div className="survey-library__tabs">
+            {Object.entries(statusFilters).map(([key, label]) => (
+              <button
+                key={key}
+                className={`survey-library__tab-btn${activeTab === key ? ' survey-library__tab-btn--active' : ''}`}
+                onClick={() => handleTabClick(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="survey-library__toolbar-right">
+            <div className="survey-library__search-wrap">
+              <span className="survey-library__search-icon">
+                <svg width="16" height="16" fill="none" stroke="#86868b" strokeWidth="2" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+                </svg>
+              </span>
+              <input
+                className="survey-library__search"
+                type="text"
+                placeholder="Search participants..."
+                value={quickFilterText}
+                onChange={onFilterTextBoxChanged}
+              />
+            </div>
           </div>
         </div>
 
-        {filtered.length === 0 ? (
-          <p className="program-detail__empty">
-            {totalParticipants === 0
-              ? 'No participants in this program yet.'
-              : 'No participants match the current filter.'}
-          </p>
-        ) : (
-          <div className="program-detail__table-wrap">
-            <table className="program-detail__table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Cohort</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Stage</th>
-                  <th>Reminders</th>
-                  <th>Submitted</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((p: ParticipantStatusRow) => (
-                  <tr key={p.participantId} className={!p.active ? 'program-detail__row--inactive' : ''}>
-                    <td className="program-detail__cell-name">{p.fullName}</td>
-                    <td>{p.email}</td>
-                    <td>{p.cohort || '—'}</td>
-                    <td>
-                      <span className="program-detail__type-badge">
-                        {p.participantType === 'NEW_HIRE' ? 'New Hire' : p.participantType === 'EXISTING_RESOURCE' ? 'Existing' : p.participantType || '—'}
-                      </span>
-                    </td>
-                    <td><DispatchStatusPill status={p.dispatchStatus} /></td>
-                    <td>{p.surveyStage ? p.surveyStage.replace(/_/g, ' ') : '—'}</td>
-                    <td style={{ textAlign: 'center' }}>{p.reminderCount > 0 ? p.reminderCount : '—'}</td>
-                    <td>
-                      {p.submittedAt
-                        ? new Date(p.submittedAt).toLocaleDateString()
-                        : '—'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <div className="ag-theme-alpine survey-library__grid">
+          <AgGridReact
+            ref={gridRef}
+            rowData={filteredParticipants}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            autoSizeStrategy={autoSizeStrategy}
+            quickFilterText={quickFilterText}
+            pagination={true}
+            paginationPageSize={10}
+            paginationPageSizeSelector={[5, 10, 20]}
+            domLayout="autoHeight"
+            rowHeight={44}
+            headerHeight={40}
+            suppressCellFocus
+            animateRows
+          />
+        </div>
       </div>
     </div>
   )

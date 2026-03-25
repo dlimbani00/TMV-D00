@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
 import Layout from '@/components/Layout'
 import Dashboard from '@/pages/Dashboard'
 import Programs from '@/pages/Programs'
@@ -14,6 +14,14 @@ import Administration from '@/pages/Administration'
 import EmailTemplateList from '@/pages/EmailTemplateList'
 import EmailTemplateEditor from '@/pages/EmailTemplateEditor'
 
+function LayoutWrapper() {
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -23,27 +31,23 @@ export default function App() {
         <Route path="/survey/:surveyId/respond" element={<SurveyResponder />} />
 
         {/* Admin routes — inside Layout with nav/header */}
-        <Route path="*" element={
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/programs" element={<Programs />} />
-              <Route path="/programs/new" element={<ProgramCreate />} />
-              <Route path="/programs/:programId" element={<ProgramDetail />} />
-              <Route path="/programs/:programId/edit" element={<ProgramCreate />} />
-              <Route path="/surveys" element={<SurveyList />} />
-              <Route path="/surveys/new" element={<SurveyEditor />} />
-              <Route path="/surveys/:surveyId/edit" element={<SurveyEditor />} />
-              <Route path="/participants" element={<ParticipantList />} />
-              <Route path="/rules" element={<AssignmentRules />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/admin" element={<Administration />} />
-              <Route path="/templates" element={<EmailTemplateList />} />
-              <Route path="/templates/new" element={<EmailTemplateEditor />} />
-              <Route path="/templates/:templateId/edit" element={<EmailTemplateEditor />} />
-            </Routes>
-          </Layout>
-        } />
+        <Route element={<LayoutWrapper />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/programs" element={<Programs />} />
+          <Route path="/programs/new" element={<ProgramCreate />} />
+          <Route path="/programs/:programId" element={<ProgramDetail />} />
+          <Route path="/programs/:programId/edit" element={<ProgramCreate />} />
+          <Route path="/surveys" element={<SurveyList />} />
+          <Route path="/surveys/new" element={<SurveyEditor />} />
+          <Route path="/surveys/:surveyId/edit" element={<SurveyEditor />} />
+          <Route path="/participants" element={<ParticipantList />} />
+          <Route path="/rules" element={<AssignmentRules />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/admin" element={<Administration />} />
+          <Route path="/templates" element={<EmailTemplateList />} />
+          <Route path="/templates/new" element={<EmailTemplateEditor />} />
+          <Route path="/templates/:templateId/edit" element={<EmailTemplateEditor />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )

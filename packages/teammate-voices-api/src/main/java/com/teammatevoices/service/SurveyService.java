@@ -4,6 +4,7 @@ import com.teammatevoices.dto.LogicRuleDTO;
 import com.teammatevoices.dto.OptionDTO;
 import com.teammatevoices.dto.QuestionDTO;
 import com.teammatevoices.dto.SurveyDTO;
+import com.teammatevoices.exception.BusinessRuleException;
 import com.teammatevoices.exception.ResourceNotFoundException;
 import com.teammatevoices.model.Survey;
 import com.teammatevoices.model.SurveyOption;
@@ -57,11 +58,24 @@ public class SurveyService {
         return toDTO(surveyRepository.save(survey));
     }
 
+    private static final java.util.Set<String> EDITABLE_STATUSES = java.util.Set.of("DRAFT", "draft");
+
+    /** Guard: reject edits on ACTIVE/CLOSED surveys. Clone instead. */
+    private void requireEditable(Survey survey) {
+        if (survey.getStatus() != null && !EDITABLE_STATUSES.contains(survey.getStatus())) {
+            throw new BusinessRuleException(
+                "Cannot edit survey '" + survey.getTitle() + "': status is " + survey.getStatus()
+                + ". Clone the survey to make changes.");
+        }
+    }
+
     @Transactional
     public SurveyDTO updateSurvey(Long id, SurveyDTO dto) {
         log.info("Updating survey: {}", id);
         Survey survey = surveyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Survey", id));
+
+        requireEditable(survey);
 
         survey.setTitle(dto.getTitle());
         survey.setDescription(dto.getDescription());
@@ -94,9 +108,11 @@ public class SurveyService {
     @Transactional
     public void deleteSurvey(Long id) {
         log.info("Deleting survey: {}", id);
-        if (!surveyRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Survey", id);
-        }
+        Survey survey = surveyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Survey", id));
+
+        requireEditable(survey);
+
         surveyRepository.deleteById(id);
     }
 

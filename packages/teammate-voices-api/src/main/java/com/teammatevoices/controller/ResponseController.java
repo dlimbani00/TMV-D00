@@ -3,6 +3,8 @@ package com.teammatevoices.controller;
 import com.teammatevoices.dto.SurveyDTO;
 import com.teammatevoices.dto.SurveyResponseDTO;
 import com.teammatevoices.dto.request.SubmitSurveyRequest;
+import com.teammatevoices.model.Dispatch;
+import com.teammatevoices.service.DispatchService;
 import com.teammatevoices.service.ResponseService;
 import com.teammatevoices.service.SurveyService;
 import org.slf4j.Logger;
@@ -21,10 +23,14 @@ public class ResponseController {
 
     private final ResponseService responseService;
     private final SurveyService surveyService;
+    private final DispatchService dispatchService;
 
-    public ResponseController(ResponseService responseService, SurveyService surveyService) {
+    public ResponseController(ResponseService responseService,
+                              SurveyService surveyService,
+                              DispatchService dispatchService) {
         this.responseService = responseService;
         this.surveyService = surveyService;
+        this.dispatchService = dispatchService;
     }
 
     /* ================================================================
@@ -35,9 +41,10 @@ public class ResponseController {
     @GetMapping("/respond/{token}")
     public ResponseEntity<SurveyDTO> getSurveyByToken(@PathVariable String token) {
         log.info("GET /respond/{}", token);
-        // TODO: look up dispatch by token, get surveyId, return survey
-        // For now, return 404 until dispatch flow is wired
-        return ResponseEntity.notFound().build();
+        // Look up dispatch by token → get surveyId → return survey
+        Dispatch dispatch = dispatchService.getDispatchByToken(token);
+        SurveyDTO survey = surveyService.getSurveyById(dispatch.getSurveyId());
+        return ResponseEntity.ok(survey);
     }
 
     /** Submit response via dispatch token */

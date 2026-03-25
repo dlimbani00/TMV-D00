@@ -11,4 +11,6 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     List<Survey> findByStatus(String status);
     List<Survey> findByTemplateType(String templateType);
     List<Survey> findByParticipantType(String participantType);
+    List<Survey> findByProgramId(Long programId);
+    boolean existsByProgramIdAndStatus(Long programId, String status);
 }

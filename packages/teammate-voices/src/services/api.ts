@@ -137,6 +137,17 @@ class TeammateVoicesAPI {
     return this.request<Dispatch[]>('/dispatches')
   }
 
+  async getDispatchesBySurvey(surveyId: number): Promise<Dispatch[]> {
+    return this.request<Dispatch[]>(`/dispatches/survey/${surveyId}`)
+  }
+
+  async dispatchSurvey(surveyId: number, baseUrl?: string): Promise<{ created: number; emailsSent: number; skipped: number; errors: string[] }> {
+    const url = baseUrl || window.location.origin
+    return this.request(`/dispatches/survey/${surveyId}/send?baseUrl=${encodeURIComponent(url)}`, {
+      method: 'POST',
+    })
+  }
+
   // Logic Rules
   async getLogicRules(surveyId: number): Promise<LogicRule[]> {
     return this.request<LogicRule[]>(`/surveys/${surveyId}/logic`)
