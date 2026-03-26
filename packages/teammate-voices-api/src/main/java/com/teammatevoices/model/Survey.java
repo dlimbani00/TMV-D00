@@ -72,6 +72,15 @@ public class Survey {
     @Column(name = "IS_ANONYMOUS")
     private Boolean isAnonymous = true;
 
+    @Column(name = "FREQUENCY", length = 20)
+    private String frequency;
+
+    @Column(name = "NEXT_SCHEDULED_AT")
+    private LocalDateTime nextScheduledAt;
+
+    @Column(name = "PARENT_SURVEY_ID")
+    private Long parentSurveyId;
+
     @CreationTimestamp
     @Column(name = "CREATED_AT", updatable = false)
     private LocalDateTime createdAt;
@@ -282,4 +291,13 @@ public class Survey {
     public void setQuestions(List<SurveyQuestion> questions) {
         this.questions = questions;
     }
+
+    public String getFrequency() { return frequency; }
+    public void setFrequency(String frequency) { this.frequency = frequency; }
+
+    public LocalDateTime getNextScheduledAt() { return nextScheduledAt; }
+    public void setNextScheduledAt(LocalDateTime nextScheduledAt) { this.nextScheduledAt = nextScheduledAt; }
+
+    public Long getParentSurveyId() { return parentSurveyId; }
+    public void setParentSurveyId(Long parentSurveyId) { this.parentSurveyId = parentSurveyId; }
 }

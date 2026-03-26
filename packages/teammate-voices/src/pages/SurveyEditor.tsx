@@ -368,6 +368,39 @@ export default function SurveyEditor() {
               Assign email templates to survey lifecycle events. Notifications are sent to <strong>keyur@me.com</strong>.
             </p>
 
+            {/* Anonymous Survey Link */}
+            {survey.surveyId && (
+              <div style={{ border: '1px solid #d2d2d7', borderRadius: 12, padding: 20, marginBottom: 24, background: '#f9f9fb' }}>
+                <h4 style={{ fontSize: 14, fontWeight: 600, color: '#1d1d1f', margin: '0 0 8px' }}>
+                  Anonymous Survey Link
+                </h4>
+                <p style={{ fontSize: 12, color: '#86868b', margin: '0 0 12px' }}>
+                  Share this link to allow anyone to take the survey without a dispatch token. Responses are anonymous.
+                </p>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <input
+                    readOnly
+                    value={`${window.location.origin}/respond/${survey.surveyId}`}
+                    style={{
+                      flex: 1, padding: '8px 12px', border: '1px solid #d2d2d7', borderRadius: 8,
+                      fontSize: 13, color: '#1d1d1f', background: 'white'
+                    }}
+                    onClick={e => (e.target as HTMLInputElement).select()}
+                  />
+                  <button
+                    className="btn btn--primary btn--sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/respond/${survey.surveyId}`)
+                      setSaveMessage('Link copied!')
+                      setTimeout(() => setSaveMessage(''), 2000)
+                    }}
+                  >
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Pre-flight Dispatch Checklist */}
             <div style={{ border: '1px solid #d2d2d7', borderRadius: 12, padding: 20, marginBottom: 24, background: dispatchPassed ? '#f0fdf4' : '#fefce8' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>

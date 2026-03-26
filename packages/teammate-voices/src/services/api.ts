@@ -169,8 +169,14 @@ class TeammateVoicesAPI {
   }
 
   // Analytics
-  async getSurveyAnalytics(surveyId: number): Promise<SurveyAnalytics> {
-    return this.request<SurveyAnalytics>(`/surveys/${surveyId}/analytics`)
+  async getSurveyAnalytics(surveyId: number, filters?: Record<string, string>): Promise<SurveyAnalytics> {
+    let url = `/surveys/${surveyId}/analytics`
+    if (filters && Object.keys(filters).length > 0) {
+      const params = new URLSearchParams()
+      Object.entries(filters).forEach(([k, v]) => params.set(`filter_${k}`, v))
+      url += `?${params.toString()}`
+    }
+    return this.request<SurveyAnalytics>(url)
   }
 
   // Email Templates

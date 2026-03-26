@@ -51,7 +51,17 @@ public class AnalyticsService {
 
     @Transactional(readOnly = true)
     public SurveyAnalyticsDTO getAnalytics(Long surveyId) {
-        log.info("Computing analytics for survey {}", surveyId);
+        return getAnalytics(surveyId, null);
+    }
+
+    /**
+     * Compute analytics with optional demographic filters.
+     * Filters: key = questionId (as string), value = answer text to match.
+     * Only responses where ALL filter conditions match are included.
+     */
+    @Transactional(readOnly = true)
+    public SurveyAnalyticsDTO getAnalytics(Long surveyId, Map<String, String> filters) {
+        log.info("Computing analytics for survey {} with filters: {}", surveyId, filters);
 
         Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Survey", surveyId));
@@ -59,6 +69,40 @@ public class AnalyticsService {
         List<SurveyResponse> responses = responseRepository.findBySurvey_SurveyId(surveyId);
         List<SurveyAnswer> allAnswers = answerRepository.findByResponse_Survey_SurveyId(surveyId);
         long dispatched = dispatchRepository.findBySurveyId(surveyId).size();
+
+        // Apply demographic filters if present
+        if (filters != null && !filters.isEmpty()) {
+            // Find response IDs that match ALL filters
+            Set<Long> matchingResponseIds = responses.stream()
+                    .map(r -> r.getResponseId())
+                    .collect(Collectors.toSet());
+
+            for (Map.Entry<String, String> filter : filters.entrySet()) {
+                Long filterQuestionId;
+                try { filterQuestionId = Long.parseLong(filter.getKey()); }
+                catch (NumberFormatException e) { continue; }
+
+                String filterValue = filter.getValue();
+                Set<Long> idsWithMatch = allAnswers.stream()
+                        .filter(a -> a.getQuestionId().equals(filterQuestionId)
+                                && filterValue.equalsIgnoreCase(a.getAnswerText()))
+                        .map(a -> a.getResponse().getResponseId())
+                        .collect(Collectors.toSet());
+
+                matchingResponseIds.retainAll(idsWithMatch);
+            }
+
+            // Filter responses and answers to only matching
+            Set<Long> finalIds = matchingResponseIds;
+            responses = responses.stream()
+                    .filter(r -> finalIds.contains(r.getResponseId()))
+                    .collect(Collectors.toList());
+            allAnswers = allAnswers.stream()
+                    .filter(a -> finalIds.contains(a.getResponse().getResponseId()))
+                    .collect(Collectors.toList());
+
+            log.info("Demographic filter applied: {} of {} responses match", responses.size(), dispatched);
+        }
 
         // Build question metadata from BOTH the DB table and pages JSON
         Map<Long, QuestionMeta> questionMetaMap = buildQuestionMetaMap(survey.getPages());

@@ -42,6 +42,15 @@ public class Dispatch {
     @Column(name = "DISPATCH_TOKEN", length = 255)
     private String dispatchToken;
 
+    @Column(name = "LAST_REMINDER_AT")
+    private LocalDateTime lastReminderAt;
+
+    @Column(name = "MAX_REMINDERS")
+    private Integer maxReminders = 3;
+
+    @Column(name = "REMINDER_INTERVAL_DAYS")
+    private Integer reminderIntervalDays = 3;
+
     @CreationTimestamp
     @Column(name = "CREATED_AT", updatable = false)
     private LocalDateTime createdAt;
@@ -163,4 +172,13 @@ public class Dispatch {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public LocalDateTime getLastReminderAt() { return lastReminderAt; }
+    public void setLastReminderAt(LocalDateTime lastReminderAt) { this.lastReminderAt = lastReminderAt; }
+
+    public Integer getMaxReminders() { return maxReminders; }
+    public void setMaxReminders(Integer maxReminders) { this.maxReminders = maxReminders; }
+
+    public Integer getReminderIntervalDays() { return reminderIntervalDays; }
+    public void setReminderIntervalDays(Integer reminderIntervalDays) { this.reminderIntervalDays = reminderIntervalDays; }
 }

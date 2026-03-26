@@ -65,6 +65,11 @@ function ActionsCellRenderer({ data, onEdit, onClone }: { data: Survey; onEdit: 
         >
           <button className="ag-actions-dropdown__item" onClick={() => { setOpen(false); onEdit(data.surveyId) }}>Edit</button>
           <button className="ag-actions-dropdown__item" onClick={() => { setOpen(false); onClone(data.surveyId) }}>Clone</button>
+          <button className="ag-actions-dropdown__item" onClick={() => {
+            setOpen(false)
+            navigator.clipboard.writeText(`${window.location.origin}/respond/${data.surveyId}`)
+            alert('Anonymous link copied!')
+          }}>Share Link</button>
         </div>,
         document.body,
       )}

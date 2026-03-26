@@ -4,12 +4,16 @@ import com.teammatevoices.dto.LogicEvaluationResultDTO;
 import com.teammatevoices.dto.LogicRuleDTO;
 import com.teammatevoices.dto.SurveyAnalyticsDTO;
 import com.teammatevoices.dto.SurveyDTO;
+import com.teammatevoices.dto.TextAnalyticsDTO;
+import com.teammatevoices.dto.TrendDTO;
 import com.teammatevoices.dto.request.EvaluateLogicRequest;
 import com.teammatevoices.dto.request.SaveLogicRequest;
 import com.teammatevoices.service.AnalyticsService;
 import com.teammatevoices.service.LogicEvaluatorService;
 import com.teammatevoices.service.SurveyService;
 import com.teammatevoices.service.SurveyWorkflowService;
+import com.teammatevoices.service.TextAnalyticsService;
+import com.teammatevoices.service.TrendService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,17 +37,23 @@ public class SurveyController {
 
     private final SurveyService surveyService;
     private final AnalyticsService analyticsService;
+    private final TrendService trendService;
+    private final TextAnalyticsService textAnalyticsService;
     private final LogicEvaluatorService logicEvaluatorService;
     private final SurveyWorkflowService workflowService;
     private final ObjectMapper objectMapper;
 
     public SurveyController(SurveyService surveyService,
                             AnalyticsService analyticsService,
+                            TrendService trendService,
+                            TextAnalyticsService textAnalyticsService,
                             LogicEvaluatorService logicEvaluatorService,
                             SurveyWorkflowService workflowService,
                             ObjectMapper objectMapper) {
         this.surveyService = surveyService;
         this.analyticsService = analyticsService;
+        this.trendService = trendService;
+        this.textAnalyticsService = textAnalyticsService;
         this.logicEvaluatorService = logicEvaluatorService;
         this.workflowService = workflowService;
         this.objectMapper = objectMapper;
@@ -137,9 +147,45 @@ public class SurveyController {
     }
 
     @GetMapping("/{id}/analytics")
-    public ResponseEntity<SurveyAnalyticsDTO> getAnalytics(@PathVariable Long id) {
-        log.info("GET /surveys/{}/analytics", id);
-        return ResponseEntity.ok(analyticsService.getAnalytics(id));
+    public ResponseEntity<SurveyAnalyticsDTO> getAnalytics(
+            @PathVariable Long id,
+            @RequestParam(required = false) Map<String, String> allParams) {
+        log.info("GET /surveys/{}/analytics params={}", id, allParams);
+        // Extract demographic filters (params starting with "filter_")
+        Map<String, String> filters = new java.util.HashMap<>();
+        if (allParams != null) {
+            allParams.forEach((key, value) -> {
+                if (key.startsWith("filter_") && value != null && !value.isBlank()) {
+                    filters.put(key.substring(7), value); // strip "filter_" prefix
+                }
+            });
+        }
+        return ResponseEntity.ok(analyticsService.getAnalytics(id, filters.isEmpty() ? null : filters));
+    }
+
+    @GetMapping("/{id}/trends")
+    public ResponseEntity<TrendDTO> getTrends(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long compareWith) {
+        log.info("GET /surveys/{}/trends compareWith={}", id, compareWith);
+        if (compareWith != null) {
+            return ResponseEntity.ok(trendService.compareSurveys(id, compareWith));
+        }
+        // If no comparison, get trend by program
+        SurveyDTO survey = surveyService.getSurveyById(id);
+        if (survey.getProgramId() != null) {
+            return ResponseEntity.ok(trendService.getTrendByProgram(survey.getProgramId()));
+        }
+        // Fallback: just return current survey as single point
+        return ResponseEntity.ok(trendService.compareSurveys(id, id));
+    }
+
+    @GetMapping("/{id}/text-analytics")
+    public ResponseEntity<TextAnalyticsDTO> getTextAnalytics(@PathVariable Long id) {
+        log.info("GET /surveys/{}/text-analytics", id);
+        SurveyAnalyticsDTO analytics = analyticsService.getAnalytics(id);
+        TextAnalyticsDTO result = textAnalyticsService.analyze(analytics.getOpenEndedResponses());
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}/logic")

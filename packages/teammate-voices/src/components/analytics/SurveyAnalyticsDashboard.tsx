@@ -6,6 +6,7 @@ import ScoreDistributionChart from './ScoreDistributionChart'
 import CategoryScoresChart from './CategoryScoresChart'
 import QuestionRankingsTable from './QuestionRankingsTable'
 import OpenEndedResponses from './OpenEndedResponses'
+import TextAnalyticsSection from './TextAnalyticsSection'
 
 interface Props {
   surveyId: number
@@ -27,16 +28,35 @@ export default function SurveyAnalyticsDashboard({ surveyId }: Props) {
   const [analytics, setAnalytics] = useState<SurveyAnalytics | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [filters, setFilters] = useState<Record<string, string>>({})
 
-  useEffect(() => {
+  const fetchAnalytics = (activeFilters: Record<string, string>) => {
     if (!surveyId) return
     setLoading(true)
     setError(null)
-    api.getSurveyAnalytics(surveyId)
+    const hasFilters = Object.values(activeFilters).some(v => v !== '')
+    api.getSurveyAnalytics(surveyId, hasFilters ? activeFilters : undefined)
       .then(setAnalytics)
       .catch(err => setError(err.message || 'Failed to load analytics'))
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    setFilters({})
+    fetchAnalytics({})
   }, [surveyId])
+
+  const handleFilterChange = (questionId: string, value: string) => {
+    const updated = { ...filters, [questionId]: value }
+    if (!value) delete updated[questionId]
+    setFilters(updated)
+    fetchAnalytics(updated)
+  }
+
+  const clearFilters = () => {
+    setFilters({})
+    fetchAnalytics({})
+  }
 
   if (loading) {
     return <div className="analytics__loading">Loading analytics...</div>
@@ -57,8 +77,70 @@ export default function SurveyAnalyticsDashboard({ surveyId }: Props) {
     ? Math.round((analytics.completedResponses / analytics.totalResponses) * 100)
     : 0
 
+  // Build demographic filter options from the demographicBreakdown data
+  const demographicFields = analytics.demographicBreakdown.reduce<Record<string, string[]>>((acc, item) => {
+    if (!acc[item.field]) acc[item.field] = []
+    if (!acc[item.field].includes(item.value)) acc[item.field].push(item.value)
+    return acc
+  }, {})
+
+  // Map field names to question IDs (hacky but works — field = question text, we need the ID)
+  // The backend returns DemographicItem with field=questionText, so we match back
+  const fieldToQuestionId: Record<string, string> = {}
+  analytics.questionRankings.forEach(q => {
+    if (demographicFields[q.questionText]) {
+      fieldToQuestionId[q.questionText] = String(q.questionId)
+    }
+  })
+
+  const hasActiveFilters = Object.values(filters).some(v => v !== '')
+
+  const handleExportPDF = () => {
+    window.print()
+  }
+
   return (
     <div className="analytics">
+      {/* Export button */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: -16 }}>
+        <button
+          className="btn btn--primary btn--sm"
+          onClick={handleExportPDF}
+          style={{ fontSize: 12 }}
+        >
+          Export PDF
+        </button>
+      </div>
+
+      {/* Demographic Filters */}
+      {Object.keys(demographicFields).length > 0 && (
+        <div className="analytics__filters">
+          <span className="analytics__filters-label">Filter by:</span>
+          {Object.entries(demographicFields).map(([field, values]) => {
+            const qId = fieldToQuestionId[field]
+            if (!qId) return null
+            return (
+              <select
+                key={field}
+                className="analytics__filter-select"
+                value={filters[qId] || ''}
+                onChange={e => handleFilterChange(qId, e.target.value)}
+              >
+                <option value="">All — {field.length > 30 ? field.slice(0, 30) + '...' : field}</option>
+                {values.map(v => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
+            )
+          })}
+          {hasActiveFilters && (
+            <button className="analytics__filter-clear" onClick={clearFilters}>
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Stat Cards */}
       <div className="analytics__metrics">
         <div className="analytics__metric-card">
@@ -133,7 +215,10 @@ export default function SurveyAnalyticsDashboard({ surveyId }: Props) {
       {/* Question Rankings */}
       <QuestionRankingsTable data={analytics.questionRankings} />
 
-      {/* Open-Ended Responses */}
+      {/* Text Analytics (Sentiment + Keywords) */}
+      <TextAnalyticsSection surveyId={surveyId} />
+
+      {/* Open-Ended Responses (raw text) */}
       <OpenEndedResponses data={analytics.openEndedResponses} />
     </div>
   )

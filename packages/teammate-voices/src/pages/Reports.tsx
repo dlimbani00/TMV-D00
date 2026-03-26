@@ -4,11 +4,12 @@ import Breadcrumb from '@/components/Breadcrumb'
 import DataTable from '@/components/DataTable'
 import type { Column } from '@/components/DataTable'
 import SurveyAnalyticsDashboard from '@/components/analytics/SurveyAnalyticsDashboard'
+import TrendView from '@/components/analytics/TrendView'
 import { api } from '@/services/api'
 import type { Participant } from '@/types/participant'
 import type { Survey } from '@/types/survey'
 
-type ReportTab = 'analytics' | 'participants'
+type ReportTab = 'analytics' | 'trends' | 'participants'
 
 const StatusBadge = ({ active }: { active: boolean }) => (
   <span className={`reports__badge ${active ? 'reports__badge--active' : 'reports__badge--inactive'}`}>
@@ -104,6 +105,12 @@ export default function Reports() {
               Survey Analytics
             </button>
             <button
+              className={`reports__tab${activeTab === 'trends' ? ' reports__tab--active' : ''}`}
+              onClick={() => setActiveTab('trends')}
+            >
+              Trends
+            </button>
+            <button
               className={`reports__tab${activeTab === 'participants' ? ' reports__tab--active' : ''}`}
               onClick={() => setActiveTab('participants')}
             >
@@ -137,6 +144,11 @@ export default function Reports() {
               <p>Select a survey above to view analytics</p>
             </div>
           )
+        )}
+
+        {/* Trends tab */}
+        {activeTab === 'trends' && (
+          <TrendView surveys={surveys} />
         )}
 
         {/* Participants tab */}
