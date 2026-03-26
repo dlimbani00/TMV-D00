@@ -38,6 +38,7 @@ export interface QuestionRankingItem {
 }
 
 export interface DemographicItem {
+  questionId: number
   field: string
   value: string
   count: number

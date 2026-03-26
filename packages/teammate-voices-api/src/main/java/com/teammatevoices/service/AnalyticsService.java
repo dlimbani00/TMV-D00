@@ -285,7 +285,7 @@ public class AnalyticsService {
                     .collect(Collectors.groupingBy(SurveyAnswer::getAnswerText, Collectors.counting()));
 
             for (Map.Entry<String, Long> vc : valueCounts.entrySet()) {
-                items.add(new DemographicItem(field, vc.getKey(), vc.getValue()));
+                items.add(new DemographicItem(qId, field, vc.getKey(), vc.getValue()));
             }
         }
 

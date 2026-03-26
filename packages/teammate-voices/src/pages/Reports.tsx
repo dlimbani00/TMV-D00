@@ -5,11 +5,12 @@ import DataTable from '@/components/DataTable'
 import type { Column } from '@/components/DataTable'
 import SurveyAnalyticsDashboard from '@/components/analytics/SurveyAnalyticsDashboard'
 import TrendView from '@/components/analytics/TrendView'
+import TextAnalyticsSection from '@/components/analytics/TextAnalyticsSection'
 import { api } from '@/services/api'
 import type { Participant } from '@/types/participant'
 import type { Survey } from '@/types/survey'
 
-type ReportTab = 'analytics' | 'trends' | 'participants'
+type ReportTab = 'analytics' | 'trends' | 'sentiment' | 'participants'
 
 const StatusBadge = ({ active }: { active: boolean }) => (
   <span className={`reports__badge ${active ? 'reports__badge--active' : 'reports__badge--inactive'}`}>
@@ -111,6 +112,12 @@ export default function Reports() {
               Trends
             </button>
             <button
+              className={`reports__tab${activeTab === 'sentiment' ? ' reports__tab--active' : ''}`}
+              onClick={() => setActiveTab('sentiment')}
+            >
+              Sentiment
+            </button>
+            <button
               className={`reports__tab${activeTab === 'participants' ? ' reports__tab--active' : ''}`}
               onClick={() => setActiveTab('participants')}
             >
@@ -118,8 +125,8 @@ export default function Reports() {
             </button>
           </div>
 
-          {/* Survey selector (only for analytics tab) */}
-          {activeTab === 'analytics' && (
+          {/* Survey selector (for analytics and sentiment tabs) */}
+          {(activeTab === 'analytics' || activeTab === 'sentiment') && (
             <select
               className="reports__survey-selector"
               value={selectedSurveyId || ''}
@@ -149,6 +156,17 @@ export default function Reports() {
         {/* Trends tab */}
         {activeTab === 'trends' && (
           <TrendView surveys={surveys} />
+        )}
+
+        {/* Sentiment tab */}
+        {activeTab === 'sentiment' && (
+          selectedSurveyId ? (
+            <TextAnalyticsSection surveyId={selectedSurveyId} />
+          ) : (
+            <div style={{ textAlign: 'center', padding: 60, color: '#86868b' }}>
+              <p>Select a survey above to view sentiment analysis</p>
+            </div>
+          )
         )}
 
         {/* Participants tab */}

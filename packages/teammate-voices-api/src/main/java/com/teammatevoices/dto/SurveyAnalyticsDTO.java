@@ -125,15 +125,18 @@ public class SurveyAnalyticsDTO {
     }
 
     public static class DemographicItem {
+        private long questionId;
         private String field;
         private String value;
         private long count;
 
         public DemographicItem() {}
-        public DemographicItem(String field, String value, long count) {
-            this.field = field; this.value = value; this.count = count;
+        public DemographicItem(long questionId, String field, String value, long count) {
+            this.questionId = questionId; this.field = field; this.value = value; this.count = count;
         }
 
+        public long getQuestionId() { return questionId; }
+        public void setQuestionId(long questionId) { this.questionId = questionId; }
         public String getField() { return field; }
         public void setField(String field) { this.field = field; }
         public String getValue() { return value; }

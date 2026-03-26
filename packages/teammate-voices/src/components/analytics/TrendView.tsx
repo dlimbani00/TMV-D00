@@ -33,6 +33,13 @@ export default function TrendView({ surveys }: Props) {
   const [trend, setTrend] = useState<TrendData | null>(null)
   const [loading, setLoading] = useState(false)
 
+  // Auto-select first survey
+  useEffect(() => {
+    if (!selectedSurveyId && surveys.length > 0 && surveys[0].surveyId) {
+      setSelectedSurveyId(surveys[0].surveyId)
+    }
+  }, [surveys])
+
   useEffect(() => {
     if (!selectedSurveyId) return
     setLoading(true)
