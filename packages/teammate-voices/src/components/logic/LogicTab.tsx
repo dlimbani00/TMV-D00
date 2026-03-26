@@ -13,6 +13,7 @@ interface LogicTabProps {
   pages: SurveyPage[]
   logicRules: LogicRule[]
   onRulesChange: (rules: LogicRule[]) => void
+  readOnly?: boolean
 }
 
 type SubTab = 'flow' | 'rules'
@@ -30,7 +31,7 @@ function createEmptyRule(): LogicRule {
   }
 }
 
-export default function LogicTab({ surveyId, pages, logicRules, onRulesChange }: LogicTabProps) {
+export default function LogicTab({ surveyId, pages, logicRules, onRulesChange, readOnly = false }: LogicTabProps) {
   const [subTab, setSubTab] = useState<SubTab>('flow')
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null)
   const [editingRule, setEditingRule] = useState<LogicRule | null>(null)
@@ -168,7 +169,13 @@ export default function LogicTab({ surveyId, pages, logicRules, onRulesChange }:
       {subTab === 'rules' && (
         <div className="logic-tab__layout">
           <div className="logic-tab__editor">
-            {editingRule ? (
+            {readOnly ? (
+              <div className="logic-tab__editor-empty">
+                <p style={{ color: '#86868b', fontSize: 14 }}>
+                  Rules are read-only because this survey is published. Clone the survey to make changes.
+                </p>
+              </div>
+            ) : editingRule ? (
               <LogicRuleEditor
                 rule={editingRule}
                 questions={allQuestions}
@@ -191,8 +198,10 @@ export default function LogicTab({ surveyId, pages, logicRules, onRulesChange }:
             {logicRules.length === 0 && !editingRule ? (
               <EmptyState
                 title="No logic rules yet"
-                message="Add conditional logic to control question visibility, requirements, and skip patterns."
-                action={{ label: '+ Add Rule', onClick: handleAddRule }}
+                message={readOnly
+                  ? "No conditional logic rules configured for this survey."
+                  : "Add conditional logic to control question visibility, requirements, and skip patterns."}
+                action={readOnly ? undefined : { label: '+ Add Rule', onClick: handleAddRule }}
                 icon={
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#6e6e73" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
@@ -207,8 +216,8 @@ export default function LogicTab({ surveyId, pages, logicRules, onRulesChange }:
                     rule={rule}
                     questions={allQuestions}
                     isSelected={selectedRuleId === rule.id}
-                    onSelect={() => handleSelectRule(rule.id)}
-                    onDelete={() => handleDeleteRule(rule.id)}
+                    onSelect={readOnly ? undefined : () => handleSelectRule(rule.id)}
+                    onDelete={readOnly ? undefined : () => handleDeleteRule(rule.id)}
                   />
                 ))}
               </div>
@@ -236,8 +245,8 @@ export default function LogicTab({ surveyId, pages, logicRules, onRulesChange }:
         </div>
       )}
 
-      {/* Logic Rules Popup (used by Flow View) */}
-      {popupQuestion && (
+      {/* Logic Rules Popup (used by Flow View) — disabled in readOnly */}
+      {popupQuestion && !readOnly && (
         <LogicRulesPopup
           open={!!popupQuestion}
           onClose={() => setPopupQuestionId(null)}

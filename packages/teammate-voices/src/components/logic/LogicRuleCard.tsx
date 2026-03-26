@@ -13,8 +13,8 @@ interface LogicRuleCardProps {
   rule: LogicRule
   questions: QuestionInfo[]
   isSelected: boolean
-  onSelect: () => void
-  onDelete: () => void
+  onSelect?: () => void
+  onDelete?: () => void
 }
 
 function getQuestionLabel(questionId: string, questions: QuestionInfo[]): string {
@@ -52,7 +52,8 @@ export default function LogicRuleCard({ rule, questions, isSelected, onSelect, o
   return (
     <div
       className={`logic-rule-card${isSelected ? ' logic-rule-card--selected' : ''}`}
-      onClick={onSelect}
+      onClick={onSelect || undefined}
+      style={{ cursor: onSelect ? 'pointer' : 'default' }}
     >
       <Card variant="outlined" padding="sm">
         <CardBody>
@@ -65,7 +66,7 @@ export default function LogicRuleCard({ rule, questions, isSelected, onSelect, o
             <p className="logic-rule-card__sentence">
               {buildRuleSentence(rule, questions)}
             </p>
-            <button
+            {onDelete && <button
               className="logic-rule-card__delete"
               onClick={(e) => { e.stopPropagation(); onDelete() }}
               aria-label="Delete rule"
@@ -74,7 +75,7 @@ export default function LogicRuleCard({ rule, questions, isSelected, onSelect, o
                 <polyline points="3 6 5 6 21 6" />
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
               </svg>
-            </button>
+            </button>}
           </div>
         </CardBody>
       </Card>

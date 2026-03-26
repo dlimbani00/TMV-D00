@@ -2,9 +2,11 @@ package com.teammatevoices.controller;
 
 import com.teammatevoices.dto.LogicEvaluationResultDTO;
 import com.teammatevoices.dto.LogicRuleDTO;
+import com.teammatevoices.dto.SurveyAnalyticsDTO;
 import com.teammatevoices.dto.SurveyDTO;
 import com.teammatevoices.dto.request.EvaluateLogicRequest;
 import com.teammatevoices.dto.request.SaveLogicRequest;
+import com.teammatevoices.service.AnalyticsService;
 import com.teammatevoices.service.LogicEvaluatorService;
 import com.teammatevoices.service.SurveyService;
 import com.teammatevoices.service.SurveyWorkflowService;
@@ -30,15 +32,18 @@ public class SurveyController {
     private static final Logger log = LoggerFactory.getLogger(SurveyController.class);
 
     private final SurveyService surveyService;
+    private final AnalyticsService analyticsService;
     private final LogicEvaluatorService logicEvaluatorService;
     private final SurveyWorkflowService workflowService;
     private final ObjectMapper objectMapper;
 
     public SurveyController(SurveyService surveyService,
+                            AnalyticsService analyticsService,
                             LogicEvaluatorService logicEvaluatorService,
                             SurveyWorkflowService workflowService,
                             ObjectMapper objectMapper) {
         this.surveyService = surveyService;
+        this.analyticsService = analyticsService;
         this.logicEvaluatorService = logicEvaluatorService;
         this.workflowService = workflowService;
         this.objectMapper = objectMapper;
@@ -129,6 +134,12 @@ public class SurveyController {
         log.info("POST /surveys/{}/clone", id);
         SurveyDTO cloned = surveyService.cloneSurvey(id);
         return ResponseEntity.status(HttpStatus.CREATED).body(cloned);
+    }
+
+    @GetMapping("/{id}/analytics")
+    public ResponseEntity<SurveyAnalyticsDTO> getAnalytics(@PathVariable Long id) {
+        log.info("GET /surveys/{}/analytics", id);
+        return ResponseEntity.ok(analyticsService.getAnalytics(id));
     }
 
     @GetMapping("/{id}/logic")

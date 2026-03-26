@@ -3,6 +3,7 @@ import type { Program, ProgramDetail } from '@/types/program'
 import type { Participant, AssignmentRule, Dispatch } from '@/types/participant'
 import type { LogicRule, LogicEvaluationResult } from '@/types/logic'
 import type { EmailTemplate, EmailTemplateAssignment } from '@/types/emailTemplate'
+import type { SurveyAnalytics } from '@/types/analytics'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081/api'
 
@@ -165,6 +166,11 @@ class TeammateVoicesAPI {
       method: 'POST',
       body: JSON.stringify({ answers }),
     })
+  }
+
+  // Analytics
+  async getSurveyAnalytics(surveyId: number): Promise<SurveyAnalytics> {
+    return this.request<SurveyAnalytics>(`/surveys/${surveyId}/analytics`)
   }
 
   // Email Templates

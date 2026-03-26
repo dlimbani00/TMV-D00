@@ -216,11 +216,16 @@ export default function SurveyEditor() {
   }
 
   const handleLogicRulesChange = (rules: LogicRule[]) => {
-    setLogicRules(rules)
     if (survey.surveyId) {
-      api.saveLogicRules(survey.surveyId, rules).catch((err: Error) => {
+      api.saveLogicRules(survey.surveyId, rules).then(() => {
+        setLogicRules(rules)
+      }).catch((err: Error) => {
         alert('Logic rule validation failed:\n\n' + err.message)
+        // Reload last valid rules from backend
+        api.getLogicRules(survey.surveyId!).then(setLogicRules).catch(() => {})
       })
+    } else {
+      setLogicRules(rules)
     }
   }
 
@@ -352,6 +357,7 @@ export default function SurveyEditor() {
             pages={survey.pages || []}
             logicRules={logicRules}
             onRulesChange={handleLogicRulesChange}
+            readOnly={survey.status === 'ACTIVE' || survey.status === 'CLOSED'}
           />
         )}
 
