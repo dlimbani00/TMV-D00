@@ -1,4 +1,4 @@
-# 🏗️POC TMS Complete Project
+
 
 A modern, accessible design system with integrated Survey Management System.
 
@@ -16,11 +16,12 @@ A modern, accessible design system with integrated Survey Management System.
 
 ---
 
-## 🎨 About POC TMS
+
 
 A modern, accessible design system inspired by Apple's design language. Built with React, TypeScript, and thoughtful attention to detail.
 
 ### Features
+- 🎨 **Apple-inspired Design Tokens**
 - 🧩 **Comprehensive Components**
 - ♿ **Accessibility First** - WCAG 2.1 AA compliant
 - 🎭 **Dark Mode** support
@@ -35,9 +36,9 @@ A modern, accessible design system inspired by Apple's design language. Built wi
 This is a **monorepo** with multiple packages:
 
 ```
-Teammate Voices Design System/
+ARYA Design System/
 ├── packages/
-│   ├── teammate-voices-design-system/      ← Design system components
+│   ├     ← Design system components
 │   ├── empsurvey/               ← React Survey Frontend ✨
 │   └── empsurvey-api/           ← Spring Boot API Backend ✨
 ├── db/                          ← Database initialization scripts
@@ -53,7 +54,7 @@ Teammate Voices Design System/
 
 | Package | Purpose | Status |
 |---------|---------|--------|
-| `teammate-voices-design-system` | Reusable UI components | ✅ Core system |
+| `arya-design-system` | Reusable UI components | ✅ Core system |
 | `empsurvey` | Survey builder UI | ✅ React frontend |
 | `empsurvey-api` | REST API backend | ✨ **NEW** |
 
@@ -63,7 +64,7 @@ Teammate Voices Design System/
 
 ### Option 1: Quick Start (Recommended)
 ```bash
-cd /Users/keyur/AI\ Projects/Teammate\ Voices
+cd /Users/keyur/AI\ Projects/ARYA\ Design\ System
 
 # Terminal 1: Database
 docker compose -f docker-compose.db.yml up -d
@@ -79,7 +80,7 @@ cd packages/empsurvey && npm run dev
 
 ### Option 2: Docker Compose
 ```bash
-cd /Users/keyur/AI\ Projects/Teammate\ Voices
+cd /Users/keyur/AI\ Projects/ARYA\ Design\ System
 docker compose up --build
 
 # Open: http://localhost:5174
@@ -209,7 +210,7 @@ docker ps
 # See Oracle container running
 
 # View surveys
-sqlplus TEAMMATE_VOICES/teammate123@localhost:1521/FREEPDB1
+sqlplus ARYA/arya123@localhost:1521/FREEPDB1
 SQL> SELECT * FROM SURVEYS;
 ```
 
@@ -271,4 +272,4 @@ We welcome contributions! Please see our contributing guidelines for more inform
 
 ## 📄 License
 
-MIT © Teammate Voices Design System
+MIT © ARYA Design System
