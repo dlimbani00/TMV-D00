@@ -80,7 +80,9 @@ export default function RuleEditorForm({
 
   const isValid =
     rule.conditions.items.length > 0 &&
-    rule.conditions.items.every(c => c.questionId) &&
+    rule.conditions.items.every(c =>
+      c.conditionType === 'participant' ? !!c.participantField : !!c.questionId
+    ) &&
     (rule.type !== 'visible_if' || rule.action.targetQuestionId) &&
     (rule.type !== 'required_if' || rule.action.targetQuestionId) &&
     (rule.type !== 'skip_to' || rule.action.targetQuestionId || rule.action.targetPageId)
